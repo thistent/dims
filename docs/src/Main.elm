@@ -224,7 +224,33 @@ view model =
                             )
                         )
                     ]
-                , Math.render (m * 1) newspaper.math <| Pars (Var Math.lambda)
+                , Math.render (m * 1) newspaper.math <|
+                    Pars
+                        (Lam
+                            (OfKind
+                                (Pars
+                                    (Infix (KVar Math.star)
+                                        (Op Math.arrow)
+                                        (KVar Math.star)
+                                    )
+                                )
+                                (Var "x")
+                            )
+                            (Pars
+                                (Lam
+                                    (OfKind
+                                        (Pars
+                                            (Infix (KVar Math.star)
+                                                (Op Math.arrow)
+                                                (KVar Math.star)
+                                            )
+                                        )
+                                        (Var "y")
+                                    )
+                                    (Var "y")
+                                )
+                            )
+                        )
                 , el [ El.height <| El.px <| round f ] El.none
                 , El.paragraph []
                     [ El.text "Ultimately, the goal is to build a zettlekasten-like"
@@ -279,6 +305,7 @@ newspaper =
         , tyVar = El.rgb 0 0.6 0.6
         , kVar = El.rgb 0 0.6 0.3
         , infix = El.rgb 0.4 0.4 0.4
+        , op = El.rgb 0.4 0.4 0.4
         , exp = black
         , frac = El.rgb 0.6 0.6 0.6
         , ofType = black

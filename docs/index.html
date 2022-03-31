@@ -5234,6 +5234,9 @@ var $author$project$Element$Math$OfType = F2(
 	function (a, b) {
 		return {$: 'OfType', a: a, b: b};
 	});
+var $author$project$Element$Math$Op = function (a) {
+	return {$: 'Op', a: a};
+};
 var $author$project$Element$Math$Pars = function (a) {
 	return {$: 'Pars', a: a};
 };
@@ -11069,7 +11072,6 @@ var $author$project$Main$getExtFont = function (extFont) {
 				{name: extFont, url: 'https://fonts.googleapis.com/css?family=' + extFont})
 			]));
 };
-var $author$project$Element$Math$lambda = 'λ';
 var $mdgriffith$elm_ui$Internal$Model$InFront = {$: 'InFront'};
 var $mdgriffith$elm_ui$Internal$Model$Nearby = F2(
 	function (a, b) {
@@ -11454,6 +11456,7 @@ var $author$project$Main$newspaper = {
 		lam: A3($mdgriffith$elm_ui$Element$rgb, 0.8, 0.3, 0),
 		ofKind: $author$project$Main$black,
 		ofType: $author$project$Main$black,
+		op: A3($mdgriffith$elm_ui$Element$rgb, 0.4, 0.4, 0.4),
 		pars: A3($mdgriffith$elm_ui$Element$rgb, 0.3, 0.3, 0.3),
 		reductionRule: $author$project$Main$black,
 		replace: $author$project$Main$black,
@@ -11535,6 +11538,7 @@ var $mdgriffith$elm_ui$Element$Border$color = function (clr) {
 };
 var $author$project$Element$Math$edges = {bottom: 0, left: 0, right: 0, top: 0};
 var $mdgriffith$elm_ui$Element$Font$italic = $mdgriffith$elm_ui$Internal$Model$htmlClass($mdgriffith$elm_ui$Internal$Style$classes.italic);
+var $author$project$Element$Math$lambda = 'λ';
 var $mdgriffith$elm_ui$Internal$Model$OnRight = {$: 'OnRight'};
 var $mdgriffith$elm_ui$Element$onRight = function (element) {
 	return A2($mdgriffith$elm_ui$Element$createNearby, $mdgriffith$elm_ui$Internal$Model$OnRight, element);
@@ -11790,6 +11794,15 @@ var $author$project$Element$Math$render = F3(
 										]),
 									A3($author$project$Element$Math$render, size, color, b))
 								]));
+					case 'Op':
+						var o = _v0.a;
+						return A2(
+							$mdgriffith$elm_ui$Element$el,
+							_List_fromArray(
+								[
+									$mdgriffith$elm_ui$Element$Font$color(color.op)
+								]),
+							$mdgriffith$elm_ui$Element$text(o));
 					case 'Exp':
 						var b = _v0.a;
 						var e = _v0.b;
@@ -12013,13 +12026,7 @@ var $author$project$Element$Math$render = F3(
 										$mdgriffith$elm_ui$Element$Background$color(
 										A2($author$project$Element$Math$changeAlpha, 0.05, color.pars))
 									]),
-								A2(
-									$mdgriffith$elm_ui$Element$el,
-									_List_fromArray(
-										[
-											$mdgriffith$elm_ui$Element$moveUp(size * 0.075)
-										]),
-									A3($author$project$Element$Math$render, size * 0.98, color, exp))));
+								A3($author$project$Element$Math$render, size * 0.98, color, exp)));
 					case 'Lam':
 						var v = _v0.a;
 						var b = _v0.b;
@@ -12443,7 +12450,30 @@ var $author$project$Main$view = function (model) {
 							$author$project$Main$m * 1,
 							$author$project$Main$newspaper.math,
 							$author$project$Element$Math$Pars(
-								$author$project$Element$Math$Var($author$project$Element$Math$lambda))),
+								A2(
+									$author$project$Element$Math$Lam,
+									A2(
+										$author$project$Element$Math$OfKind,
+										$author$project$Element$Math$Pars(
+											A3(
+												$author$project$Element$Math$Infix,
+												$author$project$Element$Math$KVar($author$project$Element$Math$star),
+												$author$project$Element$Math$Op($author$project$Element$Math$arrow),
+												$author$project$Element$Math$KVar($author$project$Element$Math$star))),
+										$author$project$Element$Math$Var('x')),
+									$author$project$Element$Math$Pars(
+										A2(
+											$author$project$Element$Math$Lam,
+											A2(
+												$author$project$Element$Math$OfKind,
+												$author$project$Element$Math$Pars(
+													A3(
+														$author$project$Element$Math$Infix,
+														$author$project$Element$Math$KVar($author$project$Element$Math$star),
+														$author$project$Element$Math$Op($author$project$Element$Math$arrow),
+														$author$project$Element$Math$KVar($author$project$Element$Math$star))),
+												$author$project$Element$Math$Var('y')),
+											$author$project$Element$Math$Var('y')))))),
 							A2(
 							$mdgriffith$elm_ui$Element$el,
 							_List_fromArray(

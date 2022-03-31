@@ -17,6 +17,7 @@ type MathExpr
     | TyVar String
     | KVar String
     | Infix MathExpr MathExpr MathExpr
+    | Op String
     | Exp MathExpr MathExpr
     | Sub MathExpr MathExpr
     | ExpSub MathExpr MathExpr MathExpr
@@ -34,6 +35,7 @@ type alias ColorScheme =
     , tyVar : El.Color
     , kVar : El.Color
     , infix : El.Color
+    , op : El.Color
     , exp : El.Color
     , frac : El.Color
     , ofType : El.Color
@@ -131,6 +133,9 @@ render size color expr =
                         render size color i
                     , el [ El.centerX, El.centerY, El.width El.shrink ] <| render size color b
                     ]
+
+            Op o ->
+                el [ Font.color color.op ] <| El.text o
 
             Exp b e ->
                 El.row
@@ -264,8 +269,8 @@ render size color expr =
                         , color.pars |> changeAlpha 0.05 |> Bg.color -- El.rgba 0.5 0.5 0.5 0.1
                         ]
                     <|
-                        el [ El.moveUp <| size * 0.075 ] <|
-                            render (size * 0.98) color exp
+                        --el [ El.moveUp <| size * 0.075 ] <|
+                        render (size * 0.98) color exp
 
             Lam v b ->
                 El.row [ Font.color color.lam ]
