@@ -169,7 +169,7 @@ view model =
                     [ El.centerX
                     , El.spacing <| round <| f * 0.3
                     ]
-                    [ Math.render (m * 1)
+                    [ Math.render (m * 0.8)
                         newspaper.math
                         (ReductionRule "do-something"
                             (Infix
