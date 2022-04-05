@@ -177,14 +177,14 @@ view model =
                                     (Exp (Var "b")
                                         (Var "c")
                                     )
-                                    (Infix (Var "x") (Var "+") (Const "1"))
+                                    (Infix (Var "x") (Op "+") (Const "1"))
                                 )
                                 (Var Math.arrow)
                                 (ReductionRule "another-rule"
                                     (Sub (Var "d")
                                         (Var "e")
                                     )
-                                    (Infix (Var "y") (Var "+") (Const "2"))
+                                    (Infix (Var "y") (Op "+") (Const "2"))
                                 )
                             )
                             (Infix
@@ -205,7 +205,7 @@ view model =
                                             )
                                         )
                                 )
-                                (Var "+")
+                                (Op "+")
                                 (Lam (Var "x")
                                     (Pars
                                         (Infix
@@ -213,7 +213,7 @@ view model =
                                                 (Exp (Const "3") (Var "a"))
                                                 (Var "b")
                                             )
-                                            (Sub (Var Math.equiv) (TyVar "Ty"))
+                                            (Sub (Op Math.equiv) (Op "Ty"))
                                             (Exp
                                                 (Sub (Const "3") (Var "a"))
                                                 (Var "b")
