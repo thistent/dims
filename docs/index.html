@@ -11540,11 +11540,11 @@ var $mdgriffith$elm_ui$Element$textColumn = F2(
 			$mdgriffith$elm_ui$Internal$Model$Unkeyed(children));
 	});
 var $author$project$Element$Math$alpha = 'α';
-var $author$project$Element$Math$Contains = F2(
+var $author$project$Element$Math$ContainedBy = F2(
 	function (a, b) {
-		return {$: 'Contains', a: a, b: b};
+		return {$: 'ContainedBy', a: a, b: b};
 	});
-var $author$project$Element$Math$contains = $author$project$Element$Math$Contains;
+var $author$project$Element$Math$containedBy = $author$project$Element$Math$ContainedBy;
 var $author$project$Element$Math$Op = function (a) {
 	return {$: 'Op', a: a};
 };
@@ -11553,7 +11553,6 @@ var $author$project$Element$Math$ExprList = function (a) {
 	return {$: 'ExprList', a: a};
 };
 var $author$project$Element$Math$all = '∀';
-var $author$project$Element$Math$arrow = '⟶';
 var $author$project$Element$Math$OfKind = F2(
 	function (a, b) {
 		return {$: 'OfKind', a: a, b: b};
@@ -11566,7 +11565,7 @@ var $author$project$Element$Math$forAll = F3(
 				[
 					$author$project$Element$Math$Op($author$project$Element$Math$all),
 					A2($author$project$Element$Math$ofKind, k, v),
-					$author$project$Element$Math$Op($author$project$Element$Math$arrow),
+					$author$project$Element$Math$Op('⸳'),
 					e
 				]));
 	});
@@ -12283,8 +12282,8 @@ var $author$project$Element$Math$render = F3(
 									A2($author$project$Element$Math$render, size, color),
 									ls)));
 					default:
-						var b = _v0.a;
-						var a = _v0.b;
+						var a = _v0.a;
+						var b = _v0.b;
 						return A2(
 							$mdgriffith$elm_ui$Element$row,
 							_List_Nil,
@@ -12315,12 +12314,12 @@ var $author$project$Main$tyallRender = A3(
 		A2(
 			$author$project$Element$Math$impliedBy,
 			A2(
-				$author$project$Element$Math$contains,
+				$author$project$Element$Math$containedBy,
+				$author$project$Element$Math$context,
 				A2(
 					$author$project$Element$Math$ofKind,
 					$author$project$Element$Math$kindNamed('K'),
-					$author$project$Element$Math$var($author$project$Element$Math$alpha)),
-				$author$project$Element$Math$context),
+					$author$project$Element$Math$var($author$project$Element$Math$alpha))),
 			A2(
 				$author$project$Element$Math$ofKind,
 				$author$project$Element$Math$kindStar,
@@ -12341,6 +12340,7 @@ var $author$project$Element$Math$SpacedExprs = function (a) {
 	return {$: 'SpacedExprs', a: a};
 };
 var $author$project$Element$Math$exprList = $author$project$Element$Math$SpacedExprs;
+var $author$project$Element$Math$arrow = '⟶';
 var $author$project$Element$Math$fun = F2(
 	function (a, b) {
 		return $author$project$Element$Math$Pars(

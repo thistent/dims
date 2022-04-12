@@ -349,20 +349,16 @@ tyallRender =
             (Math.typeNamed "A"
                 |> Math.ofKind Math.kindStar
                 |> Math.impliedBy
-                    (Math.context
-                        |> Math.contains
-                            (Math.var Math.alpha
-                                |> Math.ofKind (Math.kindNamed "K")
-                            )
+                    (Math.var Math.alpha
+                        |> Math.ofKind (Math.kindNamed "K")
+                        |> Math.containedBy Math.context
                     )
             )
-            ((Math.pars
-                (Math.forAll (Math.var Math.alpha)
-                    (Math.kindNamed "K")
-                    (Math.typeNamed "A")
-                )
+            (Math.forAll (Math.var Math.alpha)
+                (Math.kindNamed "K")
+                (Math.typeNamed "A")
+                |> Math.pars
                 |> Math.ofKind Math.kindStar
-             )
                 |> Math.impliedBy Math.context
             )
 
