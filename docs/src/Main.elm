@@ -4,7 +4,6 @@ module Main exposing (..)
 
 import Browser
 import Color
-import Diml
 import Element as El exposing (Attribute, Element, el)
 import Element.Background as Bg
 import Element.Border as Border
@@ -12,6 +11,7 @@ import Element.Font as Font
 import Element.Input as Input
 import Element.Math as Math exposing (MathExpr(..))
 import Html exposing (Html)
+import Markup
 import TypedSvg exposing (..)
 import TypedSvg.Attributes exposing (..)
 import TypedSvg.Core exposing (Svg, text)
@@ -50,7 +50,18 @@ type alias ColorScheme =
     { fg : El.Color
     , bg : El.Color
     , link : El.Color
+    , heading : HeadingColor
     , math : Math.ColorScheme
+    }
+
+
+type alias HeadingColor =
+    { h1 : El.Color
+    , h2 : El.Color
+    , h3 : El.Color
+    , h4 : El.Color
+    , h5 : El.Color
+    , h6 : El.Color
     }
 
 
@@ -160,97 +171,18 @@ view model =
                 , el [ El.height <| El.px <| round f ] El.none
                 , El.paragraph []
                     [ El.text "Here are some"
-                    , el [ Font.bold ] <| El.text " nonsensical"
                     , El.text " equations that I'm using for"
                     , El.text " typesetting purposes:"
                     ]
                 , el [ El.height <| El.px <| round f ] El.none
                 , El.row
                     [ El.centerX
-                    , El.spacing <| round <| f * 0.3
+                    , El.spacing <| round <| f * 1.5
                     ]
-                    [ Math.render (m * 0.8)
-                        newspaper.math
-                        (ReductionRule "do-something"
-                            (Infix
-                                (ReductionRule "this-one"
-                                    (Exp (Var "b")
-                                        (Var "c")
-                                    )
-                                    (Infix (Var "x") (Op "+") (Const "1"))
-                                )
-                                (Var Math.arrow)
-                                (ReductionRule "another-rule"
-                                    (Sub (Var "d")
-                                        (Var "e")
-                                    )
-                                    (Infix (Var "y") (Op "+") (Const "2"))
-                                )
-                            )
-                            (Infix
-                                (Var "a"
-                                    |> OfType (TyVar "T")
-                                    |> OfKind
-                                        (Pars
-                                            (Infix
-                                                (Pars
-                                                    (Infix
-                                                        (KVar Math.star)
-                                                        (Var Math.arrow)
-                                                        (KVar Math.star)
-                                                    )
-                                                )
-                                                (Var Math.arrow)
-                                                (KVar Math.star)
-                                            )
-                                        )
-                                )
-                                (Op "+")
-                                (Lam (Var "x")
-                                    (Pars
-                                        (Infix
-                                            (Sub
-                                                (Exp (Const "3") (Var "a"))
-                                                (Var "b")
-                                            )
-                                            (Sub (Op Math.equiv) (Op "Ty"))
-                                            (Exp
-                                                (Sub (Const "3") (Var "a"))
-                                                (Var "b")
-                                            )
-                                        )
-                                    )
-                                )
-                            )
-                        )
+                    [ tyvarRender
+                    , tyallRender
+                    , tyfixRender
                     ]
-                , Math.render (m * 1) newspaper.math <|
-                    Pars
-                        (Lam
-                            (OfKind
-                                (Pars
-                                    (Infix (KVar Math.star)
-                                        (Op Math.arrow)
-                                        (KVar Math.star)
-                                    )
-                                )
-                                (Var "x")
-                            )
-                            (Pars
-                                (Lam
-                                    (OfKind
-                                        (Pars
-                                            (Infix (KVar Math.star)
-                                                (Op Math.arrow)
-                                                (KVar Math.star)
-                                            )
-                                        )
-                                        (Var "y")
-                                    )
-                                    (Var "y")
-                                )
-                            )
-                        )
                 , el [ El.height <| El.px <| round f ] El.none
                 , El.paragraph []
                     [ El.text "Ultimately, the goal is to build a zettlekasten-like"
@@ -299,19 +231,26 @@ newspaper =
     { fg = El.rgb 0.2 0.2 0.2 --0.2 0.15 0
     , bg = El.rgb 0.8 0.8 0.8 --0.88 0.86 0.84
     , link = El.rgb 0 0.3 0.6 -- 0.7 0.1 0
+    , heading =
+        { h1 = El.rgb 0.2 0.1 0.3
+        , h2 = El.rgb 0 0.3 0.5
+        , h3 = El.rgb 0 0.5 0.6
+        , h4 = El.rgb 0.3 0.6 0
+        , h5 = El.rgb 0.8 0.5 0
+        , h6 = El.rgb 0.75 0.1 0
+        }
     , math =
         { const = black
-        , var = El.rgb 0 0.2 0.6
-        , tyVar = El.rgb 0 0.6 0.6
+        , var = El.rgb 0 0.3 0.9
+        , tyVar = El.rgb 0 0.6 0.9
         , kVar = El.rgb 0 0.6 0.3
-        , infix = El.rgb 0.4 0.4 0.4
         , op = El.rgb 0.4 0.4 0.4
         , exp = black
         , frac = El.rgb 0.6 0.6 0.6
         , ofType = black
         , ofKind = black
         , pars = El.rgb 0.3 0.3 0.3
-        , lam = El.rgb 0.8 0.3 0
+        , lam = El.rgb 0.7 0.4 0.7
         , reductionRule = black
         , replace = black
         }
@@ -376,6 +315,93 @@ latex size =
         , El.width <| El.px <| round <| size * 2.8
         ]
         El.none
+
+
+mdTextOne =
+    """
+# Hello, World!
+
+Welcome to the **DIMS** page!
+
+I'm currently working on a math expression AST and a rendering engine for working with the type theory of Plutus Core, and other languages that will be part of the research and development of my language, **Poplar**.
+
+here are some equations from the Plutus Core Spec. that I'm using for formatting and typesetting purposes:
+"""
+
+
+tyvarRender =
+    Math.render 18.0 newspaper.math <|
+        Math.reductionRule "tyvar"
+            (Math.var Math.alpha
+                |> Math.ofKind (Math.kindNamed "K")
+                |> Math.pars
+                |> Math.elementOf Math.context
+            )
+            (Math.var Math.alpha
+                |> Math.ofKind (Math.kindNamed "K")
+                |> Math.impliedBy Math.context
+            )
+
+
+tyallRender =
+    Math.render 18.0 newspaper.math <|
+        Math.reductionRule "tyall"
+            (Math.typeNamed "A"
+                |> Math.ofKind Math.kindStar
+                |> Math.impliedBy
+                    (Math.context
+                        |> Math.contains
+                            (Math.var Math.alpha
+                                |> Math.ofKind (Math.kindNamed "K")
+                            )
+                    )
+            )
+            ((Math.pars
+                (Math.forAll (Math.var Math.alpha)
+                    (Math.kindNamed "K")
+                    (Math.typeNamed "A")
+                )
+                |> Math.ofKind Math.kindStar
+             )
+                |> Math.impliedBy Math.context
+            )
+
+
+tyfixRender =
+    Math.render 18.0 newspaper.math <|
+        Math.reductionRule "tyfix"
+            (Math.exprList
+                [ Math.typeNamed "B"
+                    |> Math.ofKind (Math.kindNamed "K")
+                    |> Math.impliedBy Math.context
+                , Math.typeNamed "A"
+                    |> Math.ofKind
+                        (Math.fun
+                            (Math.fun
+                                (Math.kindNamed "K")
+                                Math.kindStar
+                            )
+                            (Math.fun (Math.kindNamed "K") Math.kindStar)
+                        )
+                    |> Math.impliedBy Math.context
+                ]
+            )
+            ((Math.ifix (Math.typeNamed "A") (Math.typeNamed "B")
+                |> Math.ofKind Math.kindStar
+             )
+                |> Math.impliedBy Math.context
+            )
+
+
+mdTextTwo =
+    """
+Ultimately, the goal is to build a zettlekasten-like mind-mapping system with a simplified flavor of Markdown, as well as the ablility to work with various forms of mathematical equations. 
+
+## Distributed Collaboration
+
+### Managing Projects 
+
+"""
 
 
 

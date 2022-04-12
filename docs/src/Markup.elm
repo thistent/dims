@@ -1,4 +1,4 @@
-module Diml exposing (..)
+module Markup exposing (..)
 
 import Parser exposing ((|.), (|=), Parser, float, spaces, succeed, symbol)
 

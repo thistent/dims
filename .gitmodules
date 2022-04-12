@@ -1,0 +1,3 @@
+[submodule "docs/math-ui"]
+	path = docs/math-ui
+	url = http://github.com/thistent/math-ui.git

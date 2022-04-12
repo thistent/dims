@@ -5208,58 +5208,11 @@ var $author$project$Main$update = F2(
 	function (msg, model) {
 		return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
 	});
-var $author$project$Element$Math$Const = function (a) {
-	return {$: 'Const', a: a};
-};
-var $author$project$Element$Math$Exp = F2(
-	function (a, b) {
-		return {$: 'Exp', a: a, b: b};
-	});
-var $author$project$Element$Math$Infix = F3(
-	function (a, b, c) {
-		return {$: 'Infix', a: a, b: b, c: c};
-	});
-var $author$project$Element$Math$KVar = function (a) {
-	return {$: 'KVar', a: a};
-};
-var $author$project$Element$Math$Lam = F2(
-	function (a, b) {
-		return {$: 'Lam', a: a, b: b};
-	});
-var $author$project$Element$Math$OfKind = F2(
-	function (a, b) {
-		return {$: 'OfKind', a: a, b: b};
-	});
-var $author$project$Element$Math$OfType = F2(
-	function (a, b) {
-		return {$: 'OfType', a: a, b: b};
-	});
-var $author$project$Element$Math$Op = function (a) {
-	return {$: 'Op', a: a};
-};
-var $author$project$Element$Math$Pars = function (a) {
-	return {$: 'Pars', a: a};
-};
-var $author$project$Element$Math$ReductionRule = F3(
-	function (a, b, c) {
-		return {$: 'ReductionRule', a: a, b: b, c: c};
-	});
-var $author$project$Element$Math$Sub = F2(
-	function (a, b) {
-		return {$: 'Sub', a: a, b: b};
-	});
-var $author$project$Element$Math$TyVar = function (a) {
-	return {$: 'TyVar', a: a};
-};
-var $author$project$Element$Math$Var = function (a) {
-	return {$: 'Var', a: a};
-};
 var $mdgriffith$elm_ui$Internal$Model$AlignY = function (a) {
 	return {$: 'AlignY', a: a};
 };
 var $mdgriffith$elm_ui$Internal$Model$Top = {$: 'Top'};
 var $mdgriffith$elm_ui$Element$alignTop = $mdgriffith$elm_ui$Internal$Model$AlignY($mdgriffith$elm_ui$Internal$Model$Top);
-var $author$project$Element$Math$arrow = '⟶';
 var $mdgriffith$elm_ui$Internal$Model$Class = F2(
 	function (a, b) {
 		return {$: 'Class', a: a, b: b};
@@ -5299,12 +5252,12 @@ var $mdgriffith$elm_ui$Element$toRgb = function (_v0) {
 	return {alpha: a, blue: b, green: g, red: r};
 };
 var $author$project$Element$Math$changeAlpha = F2(
-	function (alpha, color) {
+	function (a, color) {
 		var rgbColor = $mdgriffith$elm_ui$Element$toRgb(color);
 		return $mdgriffith$elm_ui$Element$fromRgb(
 			_Utils_update(
 				rgbColor,
-				{alpha: alpha}));
+				{alpha: a}));
 	});
 var $mdgriffith$elm_ui$Internal$Model$Colored = F3(
 	function (a, b, c) {
@@ -10996,7 +10949,6 @@ var $mdgriffith$elm_ui$Element$el = F2(
 				_List_fromArray(
 					[child])));
 	});
-var $author$project$Element$Math$equiv = '≡';
 var $author$project$Main$f = 42;
 var $mdgriffith$elm_ui$Internal$Model$Fill = function (a) {
 	return {$: 'Fill', a: a};
@@ -11437,7 +11389,6 @@ var $mdgriffith$elm_ui$Element$layoutWith = F3(
 	});
 var $mdgriffith$elm_ui$Element$layout = $mdgriffith$elm_ui$Element$layoutWith(
 	{options: _List_Nil});
-var $author$project$Main$m = $author$project$Main$f * 0.5;
 var $mdgriffith$elm_ui$Element$rgb = F3(
 	function (r, g, b) {
 		return A4($mdgriffith$elm_ui$Internal$Model$Rgba, r, g, b, 1);
@@ -11446,22 +11397,29 @@ var $author$project$Main$black = A3($mdgriffith$elm_ui$Element$rgb, 0, 0, 0);
 var $author$project$Main$newspaper = {
 	bg: A3($mdgriffith$elm_ui$Element$rgb, 0.8, 0.8, 0.8),
 	fg: A3($mdgriffith$elm_ui$Element$rgb, 0.2, 0.2, 0.2),
+	heading: {
+		h1: A3($mdgriffith$elm_ui$Element$rgb, 0.2, 0.1, 0.3),
+		h2: A3($mdgriffith$elm_ui$Element$rgb, 0, 0.3, 0.5),
+		h3: A3($mdgriffith$elm_ui$Element$rgb, 0, 0.5, 0.6),
+		h4: A3($mdgriffith$elm_ui$Element$rgb, 0.3, 0.6, 0),
+		h5: A3($mdgriffith$elm_ui$Element$rgb, 0.8, 0.5, 0),
+		h6: A3($mdgriffith$elm_ui$Element$rgb, 0.75, 0.1, 0)
+	},
 	link: A3($mdgriffith$elm_ui$Element$rgb, 0, 0.3, 0.6),
 	math: {
 		_const: $author$project$Main$black,
 		exp: $author$project$Main$black,
 		frac: A3($mdgriffith$elm_ui$Element$rgb, 0.6, 0.6, 0.6),
-		infix: A3($mdgriffith$elm_ui$Element$rgb, 0.4, 0.4, 0.4),
 		kVar: A3($mdgriffith$elm_ui$Element$rgb, 0, 0.6, 0.3),
-		lam: A3($mdgriffith$elm_ui$Element$rgb, 0.8, 0.3, 0),
+		lam: A3($mdgriffith$elm_ui$Element$rgb, 0.7, 0.4, 0.7),
 		ofKind: $author$project$Main$black,
 		ofType: $author$project$Main$black,
 		op: A3($mdgriffith$elm_ui$Element$rgb, 0.4, 0.4, 0.4),
 		pars: A3($mdgriffith$elm_ui$Element$rgb, 0.3, 0.3, 0.3),
 		reductionRule: $author$project$Main$black,
 		replace: $author$project$Main$black,
-		tyVar: A3($mdgriffith$elm_ui$Element$rgb, 0, 0.6, 0.6),
-		_var: A3($mdgriffith$elm_ui$Element$rgb, 0, 0.2, 0.6)
+		tyVar: A3($mdgriffith$elm_ui$Element$rgb, 0, 0.6, 0.9),
+		_var: A3($mdgriffith$elm_ui$Element$rgb, 0, 0.3, 0.9)
 	}
 };
 var $mdgriffith$elm_ui$Internal$Model$PaddingStyle = F5(
@@ -11523,6 +11481,121 @@ var $mdgriffith$elm_ui$Element$paragraph = F2(
 						attrs))),
 			$mdgriffith$elm_ui$Internal$Model$Unkeyed(children));
 	});
+var $mdgriffith$elm_ui$Internal$Model$boxShadowClass = function (shadow) {
+	return $elm$core$String$concat(
+		_List_fromArray(
+			[
+				shadow.inset ? 'box-inset' : 'box-',
+				$mdgriffith$elm_ui$Internal$Model$floatClass(shadow.offset.a) + 'px',
+				$mdgriffith$elm_ui$Internal$Model$floatClass(shadow.offset.b) + 'px',
+				$mdgriffith$elm_ui$Internal$Model$floatClass(shadow.blur) + 'px',
+				$mdgriffith$elm_ui$Internal$Model$floatClass(shadow.size) + 'px',
+				$mdgriffith$elm_ui$Internal$Model$formatColorClass(shadow.color)
+			]));
+};
+var $mdgriffith$elm_ui$Internal$Flag$shadows = $mdgriffith$elm_ui$Internal$Flag$flag(19);
+var $mdgriffith$elm_ui$Element$Border$shadow = function (almostShade) {
+	var shade = {blur: almostShade.blur, color: almostShade.color, inset: false, offset: almostShade.offset, size: almostShade.size};
+	return A2(
+		$mdgriffith$elm_ui$Internal$Model$StyleClass,
+		$mdgriffith$elm_ui$Internal$Flag$shadows,
+		A3(
+			$mdgriffith$elm_ui$Internal$Model$Single,
+			$mdgriffith$elm_ui$Internal$Model$boxShadowClass(shade),
+			'box-shadow',
+			$mdgriffith$elm_ui$Internal$Model$formatBoxShadow(shade)));
+};
+var $mdgriffith$elm_ui$Internal$Model$AsTextColumn = {$: 'AsTextColumn'};
+var $mdgriffith$elm_ui$Internal$Model$asTextColumn = $mdgriffith$elm_ui$Internal$Model$AsTextColumn;
+var $mdgriffith$elm_ui$Internal$Model$Max = F2(
+	function (a, b) {
+		return {$: 'Max', a: a, b: b};
+	});
+var $mdgriffith$elm_ui$Element$maximum = F2(
+	function (i, l) {
+		return A2($mdgriffith$elm_ui$Internal$Model$Max, i, l);
+	});
+var $mdgriffith$elm_ui$Internal$Model$Min = F2(
+	function (a, b) {
+		return {$: 'Min', a: a, b: b};
+	});
+var $mdgriffith$elm_ui$Element$minimum = F2(
+	function (i, l) {
+		return A2($mdgriffith$elm_ui$Internal$Model$Min, i, l);
+	});
+var $mdgriffith$elm_ui$Element$textColumn = F2(
+	function (attrs, children) {
+		return A4(
+			$mdgriffith$elm_ui$Internal$Model$element,
+			$mdgriffith$elm_ui$Internal$Model$asTextColumn,
+			$mdgriffith$elm_ui$Internal$Model$div,
+			A2(
+				$elm$core$List$cons,
+				$mdgriffith$elm_ui$Element$width(
+					A2(
+						$mdgriffith$elm_ui$Element$maximum,
+						750,
+						A2($mdgriffith$elm_ui$Element$minimum, 500, $mdgriffith$elm_ui$Element$fill))),
+				attrs),
+			$mdgriffith$elm_ui$Internal$Model$Unkeyed(children));
+	});
+var $author$project$Element$Math$alpha = 'α';
+var $author$project$Element$Math$Contains = F2(
+	function (a, b) {
+		return {$: 'Contains', a: a, b: b};
+	});
+var $author$project$Element$Math$contains = $author$project$Element$Math$Contains;
+var $author$project$Element$Math$Op = function (a) {
+	return {$: 'Op', a: a};
+};
+var $author$project$Element$Math$context = $author$project$Element$Math$Op('Γ');
+var $author$project$Element$Math$ExprList = function (a) {
+	return {$: 'ExprList', a: a};
+};
+var $author$project$Element$Math$all = '∀';
+var $author$project$Element$Math$arrow = '⟶';
+var $author$project$Element$Math$OfKind = F2(
+	function (a, b) {
+		return {$: 'OfKind', a: a, b: b};
+	});
+var $author$project$Element$Math$ofKind = $author$project$Element$Math$OfKind;
+var $author$project$Element$Math$forAll = F3(
+	function (v, k, e) {
+		return $author$project$Element$Math$ExprList(
+			_List_fromArray(
+				[
+					$author$project$Element$Math$Op($author$project$Element$Math$all),
+					A2($author$project$Element$Math$ofKind, k, v),
+					$author$project$Element$Math$Op($author$project$Element$Math$arrow),
+					e
+				]));
+	});
+var $author$project$Element$Math$turnStile = '⊢';
+var $author$project$Element$Math$impliedBy = F2(
+	function (a, b) {
+		return $author$project$Element$Math$ExprList(
+			_List_fromArray(
+				[
+					a,
+					$author$project$Element$Math$Op($author$project$Element$Math$turnStile),
+					b
+				]));
+	});
+var $author$project$Element$Math$KVar = function (a) {
+	return {$: 'KVar', a: a};
+};
+var $author$project$Element$Math$kindNamed = $author$project$Element$Math$KVar;
+var $author$project$Element$Math$star = '★';
+var $author$project$Element$Math$kindStar = $author$project$Element$Math$Op($author$project$Element$Math$star);
+var $author$project$Element$Math$Pars = function (a) {
+	return {$: 'Pars', a: a};
+};
+var $author$project$Element$Math$pars = $author$project$Element$Math$Pars;
+var $author$project$Element$Math$ReductionRule = F3(
+	function (a, b, c) {
+		return {$: 'ReductionRule', a: a, b: b, c: c};
+	});
+var $author$project$Element$Math$reductionRule = $author$project$Element$Math$ReductionRule;
 var $mdgriffith$elm_ui$Internal$Model$Bottom = {$: 'Bottom'};
 var $mdgriffith$elm_ui$Element$alignBottom = $mdgriffith$elm_ui$Internal$Model$AlignY($mdgriffith$elm_ui$Internal$Model$Bottom);
 var $mdgriffith$elm_ui$Internal$Flag$borderColor = $mdgriffith$elm_ui$Internal$Flag$flag(28);
@@ -11537,7 +11610,24 @@ var $mdgriffith$elm_ui$Element$Border$color = function (clr) {
 			clr));
 };
 var $author$project$Element$Math$edges = {bottom: 0, left: 0, right: 0, top: 0};
-var $mdgriffith$elm_ui$Element$Font$italic = $mdgriffith$elm_ui$Internal$Model$htmlClass($mdgriffith$elm_ui$Internal$Style$classes.italic);
+var $elm$core$List$intersperse = F2(
+	function (sep, xs) {
+		if (!xs.b) {
+			return _List_Nil;
+		} else {
+			var hd = xs.a;
+			var tl = xs.b;
+			var step = F2(
+				function (x, rest) {
+					return A2(
+						$elm$core$List$cons,
+						sep,
+						A2($elm$core$List$cons, x, rest));
+				});
+			var spersed = A3($elm$core$List$foldr, step, _List_Nil, tl);
+			return A2($elm$core$List$cons, hd, spersed);
+		}
+	});
 var $author$project$Element$Math$lambda = 'λ';
 var $mdgriffith$elm_ui$Internal$Model$OnRight = {$: 'OnRight'};
 var $mdgriffith$elm_ui$Element$onRight = function (element) {
@@ -11683,14 +11773,9 @@ var $author$project$Element$Math$render = F3(
 			$mdgriffith$elm_ui$Element$el,
 			_List_fromArray(
 				[
-					$mdgriffith$elm_ui$Element$centerX,
-					$mdgriffith$elm_ui$Element$centerY,
-					$mdgriffith$elm_ui$Element$width($mdgriffith$elm_ui$Element$shrink),
-					$mdgriffith$elm_ui$Element$height($mdgriffith$elm_ui$Element$shrink),
 					$mdgriffith$elm_ui$Element$Font$size(
 					$elm$core$Basics$round(size)),
-					$mdgriffith$elm_ui$Element$Font$regular,
-					$mdgriffith$elm_ui$Element$Font$italic
+					$mdgriffith$elm_ui$Element$Font$regular
 				]),
 			function () {
 				var _v0 = $author$project$Element$Math$reduce(expr);
@@ -11718,8 +11803,7 @@ var $author$project$Element$Math$render = F3(
 									$mdgriffith$elm_ui$Element$centerY,
 									$mdgriffith$elm_ui$Element$padding(
 									$elm$core$Basics$round(size * 0.1)),
-									$mdgriffith$elm_ui$Element$Font$color(color._var),
-									$mdgriffith$elm_ui$Element$moveUp(size * 0.1)
+									$mdgriffith$elm_ui$Element$Font$color(color._var)
 								]),
 							$mdgriffith$elm_ui$Element$text(s));
 					case 'TyVar':
@@ -11746,54 +11830,27 @@ var $author$project$Element$Math$render = F3(
 									$mdgriffith$elm_ui$Element$centerY,
 									$mdgriffith$elm_ui$Element$padding(
 									$elm$core$Basics$round(size * 0.1)),
-									$mdgriffith$elm_ui$Element$Font$color(color.kVar)
+									$mdgriffith$elm_ui$Element$Font$color(color.kVar),
+									$mdgriffith$elm_ui$Element$Font$bold
 								]),
 							$mdgriffith$elm_ui$Element$text(s));
-					case 'Infix':
-						var a = _v0.a;
-						var i = _v0.b;
-						var b = _v0.c;
+					case 'ExprList':
+						var ls = _v0.a;
 						return A2(
 							$mdgriffith$elm_ui$Element$row,
 							_List_fromArray(
 								[
 									$mdgriffith$elm_ui$Element$centerX,
 									$mdgriffith$elm_ui$Element$centerY,
-									$mdgriffith$elm_ui$Element$spacing(
-									$elm$core$Basics$round(size * 0.5)),
 									$mdgriffith$elm_ui$Element$padding(
-									$elm$core$Basics$round(size * 0.1))
+									$elm$core$Basics$round(size * 0.1)),
+									$mdgriffith$elm_ui$Element$spacing(
+									$elm$core$Basics$round(size * 0.5))
 								]),
-							_List_fromArray(
-								[
-									A2(
-									$mdgriffith$elm_ui$Element$el,
-									_List_fromArray(
-										[
-											$mdgriffith$elm_ui$Element$centerX,
-											$mdgriffith$elm_ui$Element$centerY,
-											$mdgriffith$elm_ui$Element$width($mdgriffith$elm_ui$Element$shrink)
-										]),
-									A3($author$project$Element$Math$render, size, color, a)),
-									A2(
-									$mdgriffith$elm_ui$Element$el,
-									_List_fromArray(
-										[
-											$mdgriffith$elm_ui$Element$Font$size(
-											$elm$core$Basics$round(size * 1.5)),
-											$mdgriffith$elm_ui$Element$Font$color(color.infix)
-										]),
-									A3($author$project$Element$Math$render, size, color, i)),
-									A2(
-									$mdgriffith$elm_ui$Element$el,
-									_List_fromArray(
-										[
-											$mdgriffith$elm_ui$Element$centerX,
-											$mdgriffith$elm_ui$Element$centerY,
-											$mdgriffith$elm_ui$Element$width($mdgriffith$elm_ui$Element$shrink)
-										]),
-									A3($author$project$Element$Math$render, size, color, b))
-								]));
+							A2(
+								$elm$core$List$map,
+								A2($author$project$Element$Math$render, size, color),
+								ls));
 					case 'Op':
 						var o = _v0.a;
 						return A2(
@@ -11804,8 +11861,8 @@ var $author$project$Element$Math$render = F3(
 								]),
 							$mdgriffith$elm_ui$Element$text(o));
 					case 'Exp':
-						var b = _v0.a;
-						var e = _v0.b;
+						var e = _v0.a;
+						var b = _v0.b;
 						return A2(
 							$mdgriffith$elm_ui$Element$row,
 							_List_fromArray(
@@ -11831,8 +11888,8 @@ var $author$project$Element$Math$render = F3(
 									A3($author$project$Element$Math$render, size * 0.75, color, e))
 								]));
 					case 'Sub':
-						var b = _v0.a;
-						var s = _v0.b;
+						var s = _v0.a;
+						var b = _v0.b;
 						return A2(
 							$mdgriffith$elm_ui$Element$row,
 							_List_fromArray(
@@ -11857,9 +11914,9 @@ var $author$project$Element$Math$render = F3(
 									A3($author$project$Element$Math$render, size * 0.75, color, s))
 								]));
 					case 'ExpSub':
-						var b = _v0.a;
-						var e = _v0.b;
-						var s = _v0.c;
+						var e = _v0.a;
+						var s = _v0.b;
+						var b = _v0.c;
 						return A2(
 							$mdgriffith$elm_ui$Element$row,
 							_List_fromArray(
@@ -11937,8 +11994,7 @@ var $author$project$Element$Math$render = F3(
 											$mdgriffith$elm_ui$Element$centerY,
 											$mdgriffith$elm_ui$Element$Font$size(
 											$elm$core$Basics$round(size * 0.8)),
-											$mdgriffith$elm_ui$Element$Font$color(color.ofType),
-											$mdgriffith$elm_ui$Element$moveRight(size * 0.05)
+											$mdgriffith$elm_ui$Element$Font$color(color.ofType)
 										]),
 									$mdgriffith$elm_ui$Element$text('∶')),
 									A2(
@@ -11996,37 +12052,25 @@ var $author$project$Element$Math$render = F3(
 										$author$project$Element$Math$edges,
 										{
 											bottom: $elm$core$Basics$round(size * 0.2),
-											left: $elm$core$Basics$round(size * 0.4),
-											right: $elm$core$Basics$round(size * 0.1),
+											left: $elm$core$Basics$round(size * 0.3),
+											right: $elm$core$Basics$round(size * 0.3),
 											top: $elm$core$Basics$round(size * 0.2)
-										}))
+										})),
+									$mdgriffith$elm_ui$Element$Border$widthEach(
+									_Utils_update(
+										$author$project$Element$Math$edges,
+										{
+											left: $elm$core$Basics$round(size * 0.1),
+											right: $elm$core$Basics$round(size * 0.1)
+										})),
+									$mdgriffith$elm_ui$Element$Border$rounded(
+									$elm$core$Basics$round(size * 1.25)),
+									$mdgriffith$elm_ui$Element$Border$color(
+									A2($author$project$Element$Math$changeAlpha, 0.3, color.pars)),
+									$mdgriffith$elm_ui$Element$Background$color(
+									A2($author$project$Element$Math$changeAlpha, 0.05, color.pars))
 								]),
-							A2(
-								$mdgriffith$elm_ui$Element$el,
-								_List_fromArray(
-									[
-										$mdgriffith$elm_ui$Element$paddingEach(
-										_Utils_update(
-											$author$project$Element$Math$edges,
-											{
-												left: $elm$core$Basics$round(size * 0.4),
-												right: $elm$core$Basics$round(size * 0.6)
-											})),
-										$mdgriffith$elm_ui$Element$Border$widthEach(
-										_Utils_update(
-											$author$project$Element$Math$edges,
-											{
-												left: $elm$core$Basics$round(size * 0.1),
-												right: $elm$core$Basics$round(size * 0.1)
-											})),
-										$mdgriffith$elm_ui$Element$Border$rounded(
-										$elm$core$Basics$round(size * 1.25)),
-										$mdgriffith$elm_ui$Element$Border$color(
-										A2($author$project$Element$Math$changeAlpha, 0.3, color.pars)),
-										$mdgriffith$elm_ui$Element$Background$color(
-										A2($author$project$Element$Math$changeAlpha, 0.05, color.pars))
-									]),
-								A3($author$project$Element$Math$render, size * 0.98, color, exp)));
+							A3($author$project$Element$Math$render, size * 0.98, color, exp));
 					case 'Lam':
 						var v = _v0.a;
 						var b = _v0.b;
@@ -12058,7 +12102,7 @@ var $author$project$Element$Math$render = F3(
 									$mdgriffith$elm_ui$Element$text('⟶')),
 									A3($author$project$Element$Math$render, size, color, b)
 								]));
-					default:
+					case 'ReductionRule':
 						var name = _v0.a;
 						var n = _v0.b;
 						var d = _v0.c;
@@ -12074,9 +12118,11 @@ var $author$project$Element$Math$render = F3(
 										[
 											$mdgriffith$elm_ui$Element$centerX,
 											$mdgriffith$elm_ui$Element$centerY,
+											$mdgriffith$elm_ui$Element$spacing(
+											$elm$core$Basics$round(size * 0.1)),
 											$mdgriffith$elm_ui$Element$padding(
 											$elm$core$Basics$round(size * 0.1)),
-											$mdgriffith$elm_ui$Element$moveRight(size * 0.15)
+											$mdgriffith$elm_ui$Element$moveRight(size * 0.1)
 										]),
 									_List_fromArray(
 										[
@@ -12090,7 +12136,8 @@ var $author$project$Element$Math$render = F3(
 													_Utils_update(
 														$author$project$Element$Math$edges,
 														{left: marginSize, right: marginSize})),
-													$mdgriffith$elm_ui$Element$moveRight(size * 0.2)
+													$mdgriffith$elm_ui$Element$moveLeft(size * 0.15),
+													$mdgriffith$elm_ui$Element$moveUp(size * 0.05)
 												]),
 											A3($author$project$Element$Math$render, size * 0.95, color, n)),
 											A2(
@@ -12102,7 +12149,7 @@ var $author$project$Element$Math$render = F3(
 													$mdgriffith$elm_ui$Element$px(2)),
 													$mdgriffith$elm_ui$Element$centerX,
 													$mdgriffith$elm_ui$Element$centerY,
-													$mdgriffith$elm_ui$Element$moveLeft(size * 0.1),
+													$mdgriffith$elm_ui$Element$moveLeft(size * 0.2),
 													$mdgriffith$elm_ui$Element$Background$color(color.frac),
 													$mdgriffith$elm_ui$Element$onRight(
 													A2(
@@ -12110,6 +12157,7 @@ var $author$project$Element$Math$render = F3(
 														_List_fromArray(
 															[
 																$mdgriffith$elm_ui$Element$Font$unitalicized,
+																$mdgriffith$elm_ui$Element$Font$bold,
 																$mdgriffith$elm_ui$Element$moveUp(size * 0.6),
 																$mdgriffith$elm_ui$Element$moveRight(size * 0.25)
 															]),
@@ -12126,7 +12174,7 @@ var $author$project$Element$Math$render = F3(
 													_Utils_update(
 														$author$project$Element$Math$edges,
 														{left: marginSize, right: marginSize})),
-													$mdgriffith$elm_ui$Element$moveLeft(size * 0.2)
+													$mdgriffith$elm_ui$Element$moveLeft(size * 0.3)
 												]),
 											A3($author$project$Element$Math$render, size * 0.95, color, d))
 										])),
@@ -12139,68 +12187,259 @@ var $author$project$Element$Math$render = F3(
 										]),
 									$mdgriffith$elm_ui$Element$text(name))
 								]));
+					case 'ApplyTo':
+						var a = _v0.a;
+						var b = _v0.b;
+						return A2(
+							$mdgriffith$elm_ui$Element$row,
+							_List_Nil,
+							_List_fromArray(
+								[
+									A2(
+									$mdgriffith$elm_ui$Element$el,
+									_List_fromArray(
+										[
+											$mdgriffith$elm_ui$Element$width(
+											$mdgriffith$elm_ui$Element$px(
+												$elm$core$Basics$round(size * 0.35))),
+											$mdgriffith$elm_ui$Element$height($mdgriffith$elm_ui$Element$fill),
+											$mdgriffith$elm_ui$Element$Border$widthEach(
+											_Utils_update(
+												$author$project$Element$Math$edges,
+												{bottom: 2, left: 2, top: 2})),
+											$mdgriffith$elm_ui$Element$Border$color(
+											A2($author$project$Element$Math$changeAlpha, 0.3, color.pars)),
+											$mdgriffith$elm_ui$Element$Background$color(
+											A2($author$project$Element$Math$changeAlpha, 0.05, color.pars))
+										]),
+									$mdgriffith$elm_ui$Element$none),
+									A2(
+									$mdgriffith$elm_ui$Element$el,
+									_List_fromArray(
+										[
+											$mdgriffith$elm_ui$Element$paddingEach(
+											_Utils_update(
+												$author$project$Element$Math$edges,
+												{
+													bottom: $elm$core$Basics$round(size * 0.15),
+													left: $elm$core$Basics$round(size * 0.2),
+													right: $elm$core$Basics$round(size * 0.2),
+													top: $elm$core$Basics$round(size * 0.15)
+												})),
+											$mdgriffith$elm_ui$Element$Border$color(
+											A2($author$project$Element$Math$changeAlpha, 0.3, color.pars)),
+											$mdgriffith$elm_ui$Element$Background$color(
+											A2($author$project$Element$Math$changeAlpha, 0.05, color.pars))
+										]),
+									A2(
+										$mdgriffith$elm_ui$Element$row,
+										_List_fromArray(
+											[
+												$mdgriffith$elm_ui$Element$spacing(
+												$elm$core$Basics$round(size * 0.1))
+											]),
+										_List_fromArray(
+											[
+												A3($author$project$Element$Math$render, size * 0.98, color, a),
+												A3($author$project$Element$Math$render, size * 0.98, color, b)
+											]))),
+									A2(
+									$mdgriffith$elm_ui$Element$el,
+									_List_fromArray(
+										[
+											$mdgriffith$elm_ui$Element$width(
+											$mdgriffith$elm_ui$Element$px(
+												$elm$core$Basics$round(size * 0.35))),
+											$mdgriffith$elm_ui$Element$height($mdgriffith$elm_ui$Element$fill),
+											$mdgriffith$elm_ui$Element$Border$widthEach(
+											_Utils_update(
+												$author$project$Element$Math$edges,
+												{bottom: 2, right: 2, top: 2})),
+											$mdgriffith$elm_ui$Element$Border$color(
+											A2($author$project$Element$Math$changeAlpha, 0.3, color.pars)),
+											$mdgriffith$elm_ui$Element$Background$color(
+											A2($author$project$Element$Math$changeAlpha, 0.05, color.pars))
+										]),
+									$mdgriffith$elm_ui$Element$none)
+								]));
+					case 'SpacedExprs':
+						var ls = _v0.a;
+						return A2(
+							$mdgriffith$elm_ui$Element$row,
+							_List_Nil,
+							A2(
+								$elm$core$List$intersperse,
+								A2(
+									$mdgriffith$elm_ui$Element$el,
+									_List_fromArray(
+										[
+											$mdgriffith$elm_ui$Element$width(
+											$mdgriffith$elm_ui$Element$px(
+												$elm$core$Basics$round(size * 1.8)))
+										]),
+									$mdgriffith$elm_ui$Element$none),
+								A2(
+									$elm$core$List$map,
+									A2($author$project$Element$Math$render, size, color),
+									ls)));
+					default:
+						var b = _v0.a;
+						var a = _v0.b;
+						return A2(
+							$mdgriffith$elm_ui$Element$row,
+							_List_Nil,
+							_List_fromArray(
+								[
+									A3($author$project$Element$Math$render, size, color, a),
+									$mdgriffith$elm_ui$Element$text(','),
+									A3($author$project$Element$Math$render, size, color, b)
+								]));
 				}
 			}());
 	});
-var $mdgriffith$elm_ui$Internal$Model$boxShadowClass = function (shadow) {
-	return $elm$core$String$concat(
-		_List_fromArray(
-			[
-				shadow.inset ? 'box-inset' : 'box-',
-				$mdgriffith$elm_ui$Internal$Model$floatClass(shadow.offset.a) + 'px',
-				$mdgriffith$elm_ui$Internal$Model$floatClass(shadow.offset.b) + 'px',
-				$mdgriffith$elm_ui$Internal$Model$floatClass(shadow.blur) + 'px',
-				$mdgriffith$elm_ui$Internal$Model$floatClass(shadow.size) + 'px',
-				$mdgriffith$elm_ui$Internal$Model$formatColorClass(shadow.color)
-			]));
+var $author$project$Element$Math$TyVar = function (a) {
+	return {$: 'TyVar', a: a};
 };
-var $mdgriffith$elm_ui$Internal$Flag$shadows = $mdgriffith$elm_ui$Internal$Flag$flag(19);
-var $mdgriffith$elm_ui$Element$Border$shadow = function (almostShade) {
-	var shade = {blur: almostShade.blur, color: almostShade.color, inset: false, offset: almostShade.offset, size: almostShade.size};
-	return A2(
-		$mdgriffith$elm_ui$Internal$Model$StyleClass,
-		$mdgriffith$elm_ui$Internal$Flag$shadows,
-		A3(
-			$mdgriffith$elm_ui$Internal$Model$Single,
-			$mdgriffith$elm_ui$Internal$Model$boxShadowClass(shade),
-			'box-shadow',
-			$mdgriffith$elm_ui$Internal$Model$formatBoxShadow(shade)));
+var $author$project$Element$Math$typeNamed = $author$project$Element$Math$TyVar;
+var $author$project$Element$Math$Var = function (a) {
+	return {$: 'Var', a: a};
 };
-var $author$project$Element$Math$star = '∗';
-var $mdgriffith$elm_ui$Internal$Model$AsTextColumn = {$: 'AsTextColumn'};
-var $mdgriffith$elm_ui$Internal$Model$asTextColumn = $mdgriffith$elm_ui$Internal$Model$AsTextColumn;
-var $mdgriffith$elm_ui$Internal$Model$Max = F2(
-	function (a, b) {
-		return {$: 'Max', a: a, b: b};
-	});
-var $mdgriffith$elm_ui$Element$maximum = F2(
-	function (i, l) {
-		return A2($mdgriffith$elm_ui$Internal$Model$Max, i, l);
-	});
-var $mdgriffith$elm_ui$Internal$Model$Min = F2(
-	function (a, b) {
-		return {$: 'Min', a: a, b: b};
-	});
-var $mdgriffith$elm_ui$Element$minimum = F2(
-	function (i, l) {
-		return A2($mdgriffith$elm_ui$Internal$Model$Min, i, l);
-	});
-var $mdgriffith$elm_ui$Element$textColumn = F2(
-	function (attrs, children) {
-		return A4(
-			$mdgriffith$elm_ui$Internal$Model$element,
-			$mdgriffith$elm_ui$Internal$Model$asTextColumn,
-			$mdgriffith$elm_ui$Internal$Model$div,
+var $author$project$Element$Math$var = $author$project$Element$Math$Var;
+var $author$project$Main$tyallRender = A3(
+	$author$project$Element$Math$render,
+	18.0,
+	$author$project$Main$newspaper.math,
+	A3(
+		$author$project$Element$Math$reductionRule,
+		'tyall',
+		A2(
+			$author$project$Element$Math$impliedBy,
 			A2(
-				$elm$core$List$cons,
-				$mdgriffith$elm_ui$Element$width(
-					A2(
-						$mdgriffith$elm_ui$Element$maximum,
-						750,
-						A2($mdgriffith$elm_ui$Element$minimum, 500, $mdgriffith$elm_ui$Element$fill))),
-				attrs),
-			$mdgriffith$elm_ui$Internal$Model$Unkeyed(children));
+				$author$project$Element$Math$contains,
+				A2(
+					$author$project$Element$Math$ofKind,
+					$author$project$Element$Math$kindNamed('K'),
+					$author$project$Element$Math$var($author$project$Element$Math$alpha)),
+				$author$project$Element$Math$context),
+			A2(
+				$author$project$Element$Math$ofKind,
+				$author$project$Element$Math$kindStar,
+				$author$project$Element$Math$typeNamed('A'))),
+		A2(
+			$author$project$Element$Math$impliedBy,
+			$author$project$Element$Math$context,
+			A2(
+				$author$project$Element$Math$ofKind,
+				$author$project$Element$Math$kindStar,
+				$author$project$Element$Math$pars(
+					A3(
+						$author$project$Element$Math$forAll,
+						$author$project$Element$Math$var($author$project$Element$Math$alpha),
+						$author$project$Element$Math$kindNamed('K'),
+						$author$project$Element$Math$typeNamed('A')))))));
+var $author$project$Element$Math$SpacedExprs = function (a) {
+	return {$: 'SpacedExprs', a: a};
+};
+var $author$project$Element$Math$exprList = $author$project$Element$Math$SpacedExprs;
+var $author$project$Element$Math$fun = F2(
+	function (a, b) {
+		return $author$project$Element$Math$Pars(
+			$author$project$Element$Math$ExprList(
+				_List_fromArray(
+					[
+						a,
+						$author$project$Element$Math$Op($author$project$Element$Math$arrow),
+						b
+					])));
 	});
+var $author$project$Element$Math$ifix = F2(
+	function (a, b) {
+		return $author$project$Element$Math$Pars(
+			$author$project$Element$Math$ExprList(
+				_List_fromArray(
+					[
+						$author$project$Element$Math$Op('ifix'),
+						a,
+						b
+					])));
+	});
+var $author$project$Main$tyfixRender = A3(
+	$author$project$Element$Math$render,
+	18.0,
+	$author$project$Main$newspaper.math,
+	A3(
+		$author$project$Element$Math$reductionRule,
+		'tyfix',
+		$author$project$Element$Math$exprList(
+			_List_fromArray(
+				[
+					A2(
+					$author$project$Element$Math$impliedBy,
+					$author$project$Element$Math$context,
+					A2(
+						$author$project$Element$Math$ofKind,
+						$author$project$Element$Math$kindNamed('K'),
+						$author$project$Element$Math$typeNamed('B'))),
+					A2(
+					$author$project$Element$Math$impliedBy,
+					$author$project$Element$Math$context,
+					A2(
+						$author$project$Element$Math$ofKind,
+						A2(
+							$author$project$Element$Math$fun,
+							A2(
+								$author$project$Element$Math$fun,
+								$author$project$Element$Math$kindNamed('K'),
+								$author$project$Element$Math$kindStar),
+							A2(
+								$author$project$Element$Math$fun,
+								$author$project$Element$Math$kindNamed('K'),
+								$author$project$Element$Math$kindStar)),
+						$author$project$Element$Math$typeNamed('A')))
+				])),
+		A2(
+			$author$project$Element$Math$impliedBy,
+			$author$project$Element$Math$context,
+			A2(
+				$author$project$Element$Math$ofKind,
+				$author$project$Element$Math$kindStar,
+				A2(
+					$author$project$Element$Math$ifix,
+					$author$project$Element$Math$typeNamed('A'),
+					$author$project$Element$Math$typeNamed('B'))))));
+var $author$project$Element$Math$isIn = '∈';
+var $author$project$Element$Math$elementOf = F2(
+	function (b, a) {
+		return $author$project$Element$Math$ExprList(
+			_List_fromArray(
+				[
+					a,
+					$author$project$Element$Math$Op($author$project$Element$Math$isIn),
+					b
+				]));
+	});
+var $author$project$Main$tyvarRender = A3(
+	$author$project$Element$Math$render,
+	18.0,
+	$author$project$Main$newspaper.math,
+	A3(
+		$author$project$Element$Math$reductionRule,
+		'tyvar',
+		A2(
+			$author$project$Element$Math$elementOf,
+			$author$project$Element$Math$context,
+			$author$project$Element$Math$pars(
+				A2(
+					$author$project$Element$Math$ofKind,
+					$author$project$Element$Math$kindNamed('K'),
+					$author$project$Element$Math$var($author$project$Element$Math$alpha)))),
+		A2(
+			$author$project$Element$Math$impliedBy,
+			$author$project$Element$Math$context,
+			A2(
+				$author$project$Element$Math$ofKind,
+				$author$project$Element$Math$kindNamed('K'),
+				$author$project$Element$Math$var($author$project$Element$Math$alpha)))));
 var $author$project$Main$view = function (model) {
 	return A2(
 		$mdgriffith$elm_ui$Element$layout,
@@ -12339,11 +12578,6 @@ var $author$project$Main$view = function (model) {
 							_List_fromArray(
 								[
 									$mdgriffith$elm_ui$Element$text('Here are some'),
-									A2(
-									$mdgriffith$elm_ui$Element$el,
-									_List_fromArray(
-										[$mdgriffith$elm_ui$Element$Font$bold]),
-									$mdgriffith$elm_ui$Element$text(' nonsensical')),
 									$mdgriffith$elm_ui$Element$text(' equations that I\'m using for'),
 									$mdgriffith$elm_ui$Element$text(' typesetting purposes:')
 								])),
@@ -12362,118 +12596,10 @@ var $author$project$Main$view = function (model) {
 								[
 									$mdgriffith$elm_ui$Element$centerX,
 									$mdgriffith$elm_ui$Element$spacing(
-									$elm$core$Basics$round($author$project$Main$f * 0.3))
+									$elm$core$Basics$round($author$project$Main$f * 1.5))
 								]),
 							_List_fromArray(
-								[
-									A3(
-									$author$project$Element$Math$render,
-									$author$project$Main$m * 0.8,
-									$author$project$Main$newspaper.math,
-									A3(
-										$author$project$Element$Math$ReductionRule,
-										'do-something',
-										A3(
-											$author$project$Element$Math$Infix,
-											A3(
-												$author$project$Element$Math$ReductionRule,
-												'this-one',
-												A2(
-													$author$project$Element$Math$Exp,
-													$author$project$Element$Math$Var('b'),
-													$author$project$Element$Math$Var('c')),
-												A3(
-													$author$project$Element$Math$Infix,
-													$author$project$Element$Math$Var('x'),
-													$author$project$Element$Math$Op('+'),
-													$author$project$Element$Math$Const('1'))),
-											$author$project$Element$Math$Var($author$project$Element$Math$arrow),
-											A3(
-												$author$project$Element$Math$ReductionRule,
-												'another-rule',
-												A2(
-													$author$project$Element$Math$Sub,
-													$author$project$Element$Math$Var('d'),
-													$author$project$Element$Math$Var('e')),
-												A3(
-													$author$project$Element$Math$Infix,
-													$author$project$Element$Math$Var('y'),
-													$author$project$Element$Math$Op('+'),
-													$author$project$Element$Math$Const('2')))),
-										A3(
-											$author$project$Element$Math$Infix,
-											A2(
-												$author$project$Element$Math$OfKind,
-												$author$project$Element$Math$Pars(
-													A3(
-														$author$project$Element$Math$Infix,
-														$author$project$Element$Math$Pars(
-															A3(
-																$author$project$Element$Math$Infix,
-																$author$project$Element$Math$KVar($author$project$Element$Math$star),
-																$author$project$Element$Math$Var($author$project$Element$Math$arrow),
-																$author$project$Element$Math$KVar($author$project$Element$Math$star))),
-														$author$project$Element$Math$Var($author$project$Element$Math$arrow),
-														$author$project$Element$Math$KVar($author$project$Element$Math$star))),
-												A2(
-													$author$project$Element$Math$OfType,
-													$author$project$Element$Math$TyVar('T'),
-													$author$project$Element$Math$Var('a'))),
-											$author$project$Element$Math$Op('+'),
-											A2(
-												$author$project$Element$Math$Lam,
-												$author$project$Element$Math$Var('x'),
-												$author$project$Element$Math$Pars(
-													A3(
-														$author$project$Element$Math$Infix,
-														A2(
-															$author$project$Element$Math$Sub,
-															A2(
-																$author$project$Element$Math$Exp,
-																$author$project$Element$Math$Const('3'),
-																$author$project$Element$Math$Var('a')),
-															$author$project$Element$Math$Var('b')),
-														A2(
-															$author$project$Element$Math$Sub,
-															$author$project$Element$Math$Op($author$project$Element$Math$equiv),
-															$author$project$Element$Math$Op('Ty')),
-														A2(
-															$author$project$Element$Math$Exp,
-															A2(
-																$author$project$Element$Math$Sub,
-																$author$project$Element$Math$Const('3'),
-																$author$project$Element$Math$Var('a')),
-															$author$project$Element$Math$Var('b'))))))))
-								])),
-							A3(
-							$author$project$Element$Math$render,
-							$author$project$Main$m * 1,
-							$author$project$Main$newspaper.math,
-							$author$project$Element$Math$Pars(
-								A2(
-									$author$project$Element$Math$Lam,
-									A2(
-										$author$project$Element$Math$OfKind,
-										$author$project$Element$Math$Pars(
-											A3(
-												$author$project$Element$Math$Infix,
-												$author$project$Element$Math$KVar($author$project$Element$Math$star),
-												$author$project$Element$Math$Op($author$project$Element$Math$arrow),
-												$author$project$Element$Math$KVar($author$project$Element$Math$star))),
-										$author$project$Element$Math$Var('x')),
-									$author$project$Element$Math$Pars(
-										A2(
-											$author$project$Element$Math$Lam,
-											A2(
-												$author$project$Element$Math$OfKind,
-												$author$project$Element$Math$Pars(
-													A3(
-														$author$project$Element$Math$Infix,
-														$author$project$Element$Math$KVar($author$project$Element$Math$star),
-														$author$project$Element$Math$Op($author$project$Element$Math$arrow),
-														$author$project$Element$Math$KVar($author$project$Element$Math$star))),
-												$author$project$Element$Math$Var('y')),
-											$author$project$Element$Math$Var('y')))))),
+								[$author$project$Main$tyvarRender, $author$project$Main$tyallRender, $author$project$Main$tyfixRender])),
 							A2(
 							$mdgriffith$elm_ui$Element$el,
 							_List_fromArray(
