@@ -175,13 +175,22 @@ view model =
                     , El.text " typesetting purposes:"
                     ]
                 , el [ El.height <| El.px <| round f ] El.none
-                , El.row
-                    [ El.centerX
-                    , El.spacing <| round <| f * 1.5
+                , El.textColumn
+                    [ El.spacing <| round <| f * 0.5
+                    , El.width El.fill
                     ]
-                    [ tyvarRender
-                    , tyallRender
-                    , tyfixRender
+                    [ el
+                        [ El.width El.fill
+                        ]
+                        tyvarRender
+                    , el
+                        [ El.width El.fill
+                        ]
+                        tyallRender
+                    , el
+                        [ El.width El.fill
+                        ]
+                        tyfixRender
                     ]
                 , el [ El.height <| El.px <| round f ] El.none
                 , El.paragraph []
