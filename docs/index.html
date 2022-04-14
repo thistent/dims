@@ -11667,6 +11667,35 @@ var $mdgriffith$elm_ui$Element$paddingEach = function (_v0) {
 				left));
 	}
 };
+var $mdgriffith$elm_ui$Element$paddingXY = F2(
+	function (x, y) {
+		if (_Utils_eq(x, y)) {
+			var f = x;
+			return A2(
+				$mdgriffith$elm_ui$Internal$Model$StyleClass,
+				$mdgriffith$elm_ui$Internal$Flag$padding,
+				A5(
+					$mdgriffith$elm_ui$Internal$Model$PaddingStyle,
+					'p-' + $elm$core$String$fromInt(x),
+					f,
+					f,
+					f,
+					f));
+		} else {
+			var yFloat = y;
+			var xFloat = x;
+			return A2(
+				$mdgriffith$elm_ui$Internal$Model$StyleClass,
+				$mdgriffith$elm_ui$Internal$Flag$padding,
+				A5(
+					$mdgriffith$elm_ui$Internal$Model$PaddingStyle,
+					'p-' + ($elm$core$String$fromInt(x) + ('-' + $elm$core$String$fromInt(y))),
+					yFloat,
+					xFloat,
+					yFloat,
+					xFloat));
+		}
+	});
 var $author$project$Element$Math$ExpSub = F3(
 	function (a, b, c) {
 		return {$: 'ExpSub', a: a, b: b, c: c};
@@ -11711,15 +11740,19 @@ var $author$project$Element$Math$reduce = function (expr) {
 };
 var $mdgriffith$elm_ui$Element$Font$regular = A2($mdgriffith$elm_ui$Internal$Model$Class, $mdgriffith$elm_ui$Internal$Flag$fontWeight, $mdgriffith$elm_ui$Internal$Style$classes.textNormalWeight);
 var $mdgriffith$elm_ui$Internal$Flag$borderRound = $mdgriffith$elm_ui$Internal$Flag$flag(17);
-var $mdgriffith$elm_ui$Element$Border$rounded = function (radius) {
+var $mdgriffith$elm_ui$Element$Border$roundEach = function (_v0) {
+	var topLeft = _v0.topLeft;
+	var topRight = _v0.topRight;
+	var bottomLeft = _v0.bottomLeft;
+	var bottomRight = _v0.bottomRight;
 	return A2(
 		$mdgriffith$elm_ui$Internal$Model$StyleClass,
 		$mdgriffith$elm_ui$Internal$Flag$borderRound,
 		A3(
 			$mdgriffith$elm_ui$Internal$Model$Single,
-			'br-' + $elm$core$String$fromInt(radius),
+			'br-' + ($elm$core$String$fromInt(topLeft) + ('-' + ($elm$core$String$fromInt(topRight) + ($elm$core$String$fromInt(bottomLeft) + ('-' + $elm$core$String$fromInt(bottomRight)))))),
 			'border-radius',
-			$elm$core$String$fromInt(radius) + 'px'));
+			$elm$core$String$fromInt(topLeft) + ('px ' + ($elm$core$String$fromInt(topRight) + ('px ' + ($elm$core$String$fromInt(bottomRight) + ('px ' + ($elm$core$String$fromInt(bottomLeft) + 'px'))))))));
 };
 var $mdgriffith$elm_ui$Element$Font$unitalicized = $mdgriffith$elm_ui$Internal$Model$htmlClass($mdgriffith$elm_ui$Internal$Style$classes.textUnitalicized);
 var $mdgriffith$elm_ui$Internal$Model$BorderWidth = F5(
@@ -11844,8 +11877,6 @@ var $author$project$Element$Math$render = F3(
 								[
 									$mdgriffith$elm_ui$Element$centerX,
 									$mdgriffith$elm_ui$Element$centerY,
-									$mdgriffith$elm_ui$Element$padding(
-									$elm$core$Basics$round(size * 0.1)),
 									$mdgriffith$elm_ui$Element$spacing(
 									$elm$core$Basics$round(size * 0.5))
 								]),
@@ -12049,30 +12080,44 @@ var $author$project$Element$Math$render = F3(
 							$mdgriffith$elm_ui$Element$el,
 							_List_fromArray(
 								[
-									$mdgriffith$elm_ui$Element$paddingEach(
-									_Utils_update(
-										$author$project$Element$Math$edges,
-										{
-											bottom: $elm$core$Basics$round(size * 0.2),
-											left: $elm$core$Basics$round(size * 0.3),
-											right: $elm$core$Basics$round(size * 0.3),
-											top: $elm$core$Basics$round(size * 0.2)
-										})),
-									$mdgriffith$elm_ui$Element$Border$widthEach(
-									_Utils_update(
-										$author$project$Element$Math$edges,
-										{
-											left: $elm$core$Basics$round(size * 0.1),
-											right: $elm$core$Basics$round(size * 0.1)
-										})),
-									$mdgriffith$elm_ui$Element$Border$rounded(
-									$elm$core$Basics$round(size * 1.25)),
-									$mdgriffith$elm_ui$Element$Border$color(
-									A2($author$project$Element$Math$changeAlpha, 0.3, color.pars)),
-									$mdgriffith$elm_ui$Element$Background$color(
-									A2($author$project$Element$Math$changeAlpha, 0.05, color.pars))
+									A2(
+									$mdgriffith$elm_ui$Element$paddingXY,
+									$elm$core$Basics$round(size * 0.15),
+									0)
 								]),
-							A3($author$project$Element$Math$render, size * 0.98, color, exp));
+							A2(
+								$mdgriffith$elm_ui$Element$el,
+								_List_fromArray(
+									[
+										$mdgriffith$elm_ui$Element$paddingEach(
+										_Utils_update(
+											$author$project$Element$Math$edges,
+											{
+												bottom: $elm$core$Basics$round(size * 0.3),
+												left: $elm$core$Basics$round(size * 0.3),
+												right: $elm$core$Basics$round(size * 0.35),
+												top: $elm$core$Basics$round(size * 0.25)
+											})),
+										$mdgriffith$elm_ui$Element$Border$widthEach(
+										_Utils_update(
+											$author$project$Element$Math$edges,
+											{
+												left: $elm$core$Basics$round(size * 0.1),
+												right: $elm$core$Basics$round(size * 0.1)
+											})),
+										$mdgriffith$elm_ui$Element$Border$roundEach(
+										{
+											bottomLeft: $elm$core$Basics$round(size * 1.15),
+											bottomRight: $elm$core$Basics$round(size * 1.5),
+											topLeft: $elm$core$Basics$round(size * 1.5),
+											topRight: $elm$core$Basics$round(size * 1.15)
+										}),
+										$mdgriffith$elm_ui$Element$Border$color(
+										A2($author$project$Element$Math$changeAlpha, 0.3, color.pars)),
+										$mdgriffith$elm_ui$Element$Background$color(
+										A2($author$project$Element$Math$changeAlpha, 0.05, color.pars))
+									]),
+								A3($author$project$Element$Math$render, size * 0.98, color, exp)));
 					case 'Lam':
 						var v = _v0.a;
 						var b = _v0.b;
@@ -12179,15 +12224,7 @@ var $author$project$Element$Math$render = F3(
 													$mdgriffith$elm_ui$Element$moveLeft(size * 0.3)
 												]),
 											A3($author$project$Element$Math$render, size * 0.95, color, d))
-										])),
-									A2(
-									$mdgriffith$elm_ui$Element$el,
-									_List_fromArray(
-										[
-											$mdgriffith$elm_ui$Element$Font$color(
-											A2($author$project$Element$Math$changeAlpha, 0, color.frac))
-										]),
-									$mdgriffith$elm_ui$Element$text(name))
+										]))
 								]));
 					case 'ApplyTo':
 						var a = _v0.a;
