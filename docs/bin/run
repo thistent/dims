@@ -1,0 +1,4 @@
+#!/bin/sh
+cp assets/index-backup.html index.html
+elm-live src/Main.elm -u -- --output=assets/main.js
+

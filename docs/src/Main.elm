@@ -1,8 +1,9 @@
-module Main exposing (..)
+port module Main exposing (..)
 
 -- import Html.Attributes exposing (id, style)
 
 import Browser
+import Browser.Navigation as Nav
 import Color
 import Element as El exposing (Attribute, Element, el)
 import Element.Background as Bg
@@ -11,22 +12,66 @@ import Element.Font as Font
 import Element.Input as Input
 import Element.Math as Math exposing (MathExpr(..))
 import Html exposing (Html)
+import Json.Decode as Decode
+import Json.Encode as Encode
 import Markup
+import Time
 import TypedSvg exposing (..)
 import TypedSvg.Attributes exposing (..)
 import TypedSvg.Core exposing (Svg, text)
 import TypedSvg.Filters.Attributes exposing (..)
-import TypedSvg.Types as Types exposing (EdgeMode(..), FontWeight(..), Paint(..), px)
+import TypedSvg.Types as Types
+    exposing
+        ( EdgeMode(..)
+        , FontWeight(..)
+        , Paint(..)
+        , px
+        )
+import Url
 
 
-main : Program () Model Msg
+
+-- Ports --
+
+
+port saveState : Encode.Value -> Cmd msg
+
+
+port clearState : () -> Cmd msg
+
+
+
+-- Main Function --
+
+
+main : Program ( Int, Maybe String ) Model Msg
 main =
-    Browser.element
+    Browser.application
         { init = init
         , subscriptions = subs
         , update = update
         , view = view
+        , onUrlChange = UrlChanged
+        , onUrlRequest = LinkClicked
         }
+
+
+
+-- Initial State --
+
+
+init :
+    ( Int, Maybe String )
+    -> Url.Url
+    -> Nav.Key
+    -> ( Model, Cmd Msg )
+init ( time, initSaveState ) url key =
+    ( { key = key
+      , url = url
+      , time = Time.millisToPosix time
+      }
+    , Cmd.none
+    )
 
 
 
@@ -34,16 +79,19 @@ main =
 
 
 type alias Model =
-    Int
-
-
-init : () -> ( Model, Cmd Msg )
-init () =
-    ( 0, Cmd.none )
+    { key : Nav.Key
+    , url : Url.Url
+    , time : Time.Posix
+    }
 
 
 type Msg
-    = NoOp
+    = UrlChanged Url.Url
+    | LinkClicked Browser.UrlRequest
+
+
+
+-- Other Types --
 
 
 type alias ColorScheme =
@@ -81,7 +129,20 @@ subs model =
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
-        NoOp ->
+        LinkClicked urlRequest ->
+            case urlRequest of
+                Browser.Internal url ->
+                    ( model
+                    , Cmd.none
+                      --Nav.pushUrl model.key <|
+                      --Url.toString url
+                    )
+
+                Browser.External href ->
+                    ( model, Cmd.none )
+
+        --Nav.load href )
+        UrlChanged url ->
             ( model, Cmd.none )
 
 
@@ -99,126 +160,121 @@ m =
     f * 0.5
 
 
-view : Model -> Html Msg
+view : Model -> Browser.Document Msg
 view model =
-    El.layout
-        [ El.width El.fill
-        , El.height El.fill
-        , Font.color newspaper.fg --<| El.rgb 0.8 0.8 0.8
-
-        --, Font.family [ Font.serif ]
-        , getExtFont "Dosis"
-
-        --, getExtFont "JetBrains"
-        --, getExtFont "Roboto"
-        , Font.size 18
-        , Bg.color newspaper.bg --<| El.rgb 0 0 0
-        ]
-    <|
-        El.row
+    (\body -> { title = "DIMS", body = [ body ] }) <|
+        El.layout
             [ El.width El.fill
             , El.height El.fill
+            , Font.color newspaper.fg --<| El.rgb 0.8 0.8 0.8
+
+            --, Font.family [ Font.serif ]
+            , getExtFont "Dosis"
+
+            --, getExtFont "JetBrains"
+            --, getExtFont "Roboto"
+            , Font.size 18
+            , Bg.color newspaper.bg --<| El.rgb 0 0 0
             ]
-            [ El.column
-                [ El.alignTop
-                , El.height El.fill
-                , newspaper.fg |> Math.changeAlpha 0.1 |> Bg.color
-                , Border.shadow
-                    { offset = ( 2.0, 0 )
-                    , size = 4.0
-                    , blur = 10
-                    , color = newspaper.fg |> Math.changeAlpha 0.2
-                    }
-                , El.padding <| round f
-                ]
-                [ el
-                    [ Font.size <| round <| f
-                    , Font.bold
-                    ]
-                  <|
-                    El.text "DIMS"
-                , El.text "Distributed Idea Mapping System"
-                ]
-            , El.textColumn
+        <|
+            El.row
                 [ El.width El.fill
                 , El.height El.fill
-                , El.padding <| round f
                 ]
-                [ el [ El.width El.fill ] <|
-                    el
-                        [ El.centerY
-                        , Font.bold
-                        , Font.size <| round f
-                        ]
-                    <|
-                        El.text "Hello, World! "
-                , El.paragraph []
-                    [ El.text "Welcome to the "
-                    , el [ Font.bold ] <| El.text "DIMS"
-                    , El.text " page!"
-                    ]
-                , el [ El.height <| El.px <| round f ] El.none
-                , El.paragraph []
-                    [ El.text "I'm currently working on a math expression AST"
-                    , El.text " and a renderer that displays the sorts of equations"
-                    , El.text " that I need for fitting together the type theories"
-                    , El.text " of "
-                    , el [ Font.bold ] <| El.text "Plutus Core"
-                    , El.text " and other languages I want to target with my language, "
-                    , el [ Font.bold ] <| El.text "Poplar"
-                    , El.text "."
-                    ]
-                , el [ El.height <| El.px <| round f ] El.none
-                , El.paragraph []
-                    [ El.text "Here are some"
-                    , El.text " equations that I'm using for"
-                    , El.text " typesetting purposes:"
-                    ]
-                , el [ El.height <| El.px <| round f ] El.none
-                , El.textColumn
-                    [ El.spacing <| round <| f * 0.5
-                    , El.width El.fill
+                [ El.column
+                    [ El.alignTop
+                    , El.height El.fill
+                    , newspaper.fg |> Math.changeAlpha 0.1 |> Bg.color
+                    , Border.shadow
+                        { offset = ( 2.0, 0 )
+                        , size = 4.0
+                        , blur = 10
+                        , color = newspaper.fg |> Math.changeAlpha 0.2
+                        }
+                    , El.padding <| round f
                     ]
                     [ el
-                        [ El.width El.fill
+                        [ Font.size <| round <| f
+                        , Font.bold
                         ]
-                        tyvarRender
-                    , el
-                        [ El.width El.fill
-                        ]
-                        tyallRender
-                    , el
-                        [ El.width El.fill
-                        ]
-                        tyfixRender
+                      <|
+                        El.text "DIMS"
+                    , El.text "Distributed Idea Mapping System"
                     ]
-                , el [ El.height <| El.px <| round f ] El.none
-                , El.paragraph []
-                    [ El.text "Ultimately, the goal is to build a zettlekasten-like"
-                    , El.text " mind-mapping experience with a simple flavor of Markdown,"
-                    , El.text " as well as some built-in tools for working with ASTs"
-                    , El.text " for things like building math equations, or mapping out"
-                    , El.text " timelines for a project."
+                , El.textColumn
+                    [ El.width El.fill
+                    , El.height El.fill
+                    , El.padding <| round f
                     ]
-                , el [ El.height <| El.px <| round f ] El.none
-                , El.paragraph []
-                    [ El.text "Currently, I'm just formatting this page by hand,"
-                    , El.text " but eventually, documentation like this,"
+                    [ el [ El.width El.fill ] <|
+                        el
+                            [ El.centerY
+                            , Font.bold
+                            , Font.size <| round f
+                            ]
+                        <|
+                            El.text "Hello, World! "
                     , El.paragraph []
-                        [ El.text " or other formats like"
-                        , latex 18.0
-                        , El.text ","
+                        [ El.text "Welcome to the "
+                        , el [ Font.bold ] <| El.text "DIMS"
+                        , El.text " page!"
                         ]
-                    , El.text " should be automatically generated from any subset of"
-                    , El.text " someone's \"second brain\" that can be managed by a"
-                    , El.text " high-performance backend running privately,"
-                    , El.text " in a way that links nodes together,"
-                    , El.text " or granting people public access."
-                    , El.text " Credentials could be based on linking a wallet address,"
-                    , El.text " or an Ada Handle."
+                    , el [ El.height <| El.px <| round f ] El.none
+                    , El.paragraph []
+                        [ El.text "I'm currently working on a math expression AST"
+                        , El.text " and a renderer that displays the sorts of equations"
+                        , El.text " that I need for fitting together the type theories"
+                        , El.text " of "
+                        , el [ Font.bold ] <| El.text "Plutus Core"
+                        , El.text " and other languages I want to target with my language, "
+                        , el [ Font.bold ] <| El.text "Poplar"
+                        , El.text "."
+                        ]
+                    , el [ El.height <| El.px <| round f ] El.none
+                    , El.paragraph []
+                        [ El.text "Here are some"
+                        , El.text " equations that I'm using for"
+                        , El.text " typesetting purposes:"
+                        ]
+                    , el [ El.height <| El.px <| round f ] El.none
+                    , El.textColumn
+                        [ El.spacing <| round <| f * 0.5
+                        , El.width El.fill
+                        , Border.widthEach { edges | top = 1, bottom = 1 }
+                        , Border.color newspaper.math.frac
+                        , El.padding <| round <| f * 0.5
+                        ]
+                        [ el [ El.width El.fill ] tyvarRender
+                        , el [ El.width El.fill ] tyallRender
+                        , el [ El.width El.fill ] tyfixRender
+                        ]
+                    , el [ El.height <| El.px <| round f ] El.none
+                    , El.paragraph []
+                        [ El.text "Ultimately, the goal is to build a zettlekasten-like"
+                        , El.text " mind-mapping experience with a simple flavor of Markdown,"
+                        , El.text " as well as some built-in tools for working with ASTs"
+                        , El.text " for things like building math equations, or mapping out"
+                        , El.text " timelines for a project."
+                        ]
+                    , el [ El.height <| El.px <| round f ] El.none
+                    , El.paragraph []
+                        [ El.text "Currently, I'm just formatting this page by hand,"
+                        , El.text " but eventually, documentation like this,"
+                        , El.paragraph []
+                            [ El.text " or other formats like"
+                            , latex 18.0
+                            , El.text ","
+                            ]
+                        , El.text " should be automatically generated from any subset of"
+                        , El.text " someone's \"second brain\" that can be managed by a"
+                        , El.text " high-performance backend running privately,"
+                        , El.text " in a way that links nodes together,"
+                        , El.text " or granting people public access."
+                        , El.text " Credentials could be based on linking a wallet address,"
+                        , El.text " or an Ada Handle."
+                        ]
                     ]
                 ]
-            ]
 
 
 
