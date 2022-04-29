@@ -10,17 +10,19 @@ import Element.Background as Bg
 import Element.Border as Border
 import Element.Font as Font
 import Element.Input as Input
-import Element.Math as Math exposing (MathExpr(..))
+import Element.Math as Math exposing (MathExpr)
+import Force exposing (State)
+import Graph exposing (..)
 import Html exposing (Html)
 import Json.Decode as Decode
 import Json.Encode as Encode
 import Markup
 import Time
-import TypedSvg exposing (..)
-import TypedSvg.Attributes exposing (..)
-import TypedSvg.Core exposing (Svg, text)
-import TypedSvg.Filters.Attributes exposing (..)
-import TypedSvg.Types as Types
+import TypedSvg as Ts
+import TypedSvg.Attributes as Ts
+import TypedSvg.Core as Ts
+import TypedSvg.Filters.Attributes as Ts
+import TypedSvg.Types as Ts
     exposing
         ( EdgeMode(..)
         , FontWeight(..)
@@ -57,6 +59,24 @@ main =
 
 
 
+-- Model --
+
+
+type alias Model =
+    { key : Nav.Key
+    , url : Url.Url
+    , time : Time.Posix
+
+    --, forceSim : Force.State Int
+    }
+
+
+type Msg
+    = UrlChanged Url.Url
+    | LinkClicked Browser.UrlRequest
+
+
+
 -- Initial State --
 
 
@@ -69,25 +89,11 @@ init ( time, initSaveState ) url key =
     ( { key = key
       , url = url
       , time = Time.millisToPosix time
+
+      --, forceSim =
       }
     , Cmd.none
     )
-
-
-
--- Model --
-
-
-type alias Model =
-    { key : Nav.Key
-    , url : Url.Url
-    , time : Time.Posix
-    }
-
-
-type Msg
-    = UrlChanged Url.Url
-    | LinkClicked Browser.UrlRequest
 
 
 
@@ -98,18 +104,13 @@ type alias ColorScheme =
     { fg : El.Color
     , bg : El.Color
     , link : El.Color
-    , heading : HeadingColor
-    , math : Math.ColorScheme
-    }
-
-
-type alias HeadingColor =
-    { h1 : El.Color
+    , h1 : El.Color
     , h2 : El.Color
     , h3 : El.Color
     , h4 : El.Color
     , h5 : El.Color
     , h6 : El.Color
+    , math : Math.ColorScheme
     }
 
 
