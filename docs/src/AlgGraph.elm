@@ -1,4 +1,4 @@
-module Graph exposing (..)
+module AlgGraph exposing (..)
 
 {-|
 
@@ -26,8 +26,8 @@ empty =
     Empty
 
 
-singleton : a -> Graph e a
-singleton a =
+vertex : a -> Graph e a
+vertex a =
     Vertex a
 
 
@@ -41,9 +41,12 @@ product e g1 g2 =
     Connect e g1 g2
 
 
-edge : e -> a -> a -> Graph e a
-edge e a b =
-    product e (singleton a) (singleton a)
+
+{- FIXME: This function might not produce a valid algebraic graph!
+   edge : e -> a -> a -> Graph e a
+   edge e a b =
+       product e (singleton a) (singleton a)
+-}
 
 
 vertices : Graph e comparable -> Set comparable
@@ -189,6 +192,22 @@ mapEdges fun graph =
             Connect (fun e) (mapEdges fun a) (mapEdges fun b)
 
 
+{-| TODO:
+
+
+## Consider a similar function for edges
+
+If you have a function of type: `(e -> Graph f a) -> Graph e a -> Graph f a`
+then the only output of the `(e -> Graph f a)` part can be `Empty` because
+there is no source of an `a` typed value.
+
+It may be possible to have the following type:
+
+      concatMap : (e -> a -> Graph f b) -> Graph e a -> Graph f b
+
+The problem with this is that
+
+-}
 concatMap : (a -> Graph e b) -> Graph e a -> Graph e b
 concatMap fun graph =
     case graph of
