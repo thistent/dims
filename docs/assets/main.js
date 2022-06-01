@@ -5658,8 +5658,8 @@ var $author$project$Main$mix = F3(
 var $author$project$Main$white = A3($mdgriffith$elm_ui$Element$rgb, 1, 1, 1);
 var $author$project$Main$palFun = F3(
 	function (label, color1, color2) {
-		var light = A3($author$project$Main$mix, 0.12, color1, $author$project$Main$white);
-		var dark = A3($author$project$Main$mix, 0.12, color1, $author$project$Main$black);
+		var light = A3($author$project$Main$mix, 0.13, color1, $author$project$Main$white);
+		var dark = A3($author$project$Main$mix, 0.13, color1, $author$project$Main$black);
 		var _v0 = function () {
 			if (!label) {
 				return _Utils_Tuple2(dark, light);
@@ -5672,8 +5672,8 @@ var $author$project$Main$palFun = F3(
 		var hC = function (i) {
 			return (i === 1) ? color1 : A3(
 				$author$project$Main$mix,
-				(i - 1) * 0.05,
-				fg,
+				(i - 1) * 0.04,
+				bg,
 				A3($author$project$Main$mix, i * 0.175, color2, color1));
 		};
 		return {
@@ -5717,7 +5717,7 @@ var $author$project$Main$lightMode = A3(
 	$author$project$Main$palFun,
 	0,
 	A3($mdgriffith$elm_ui$Element$rgb255, 0, 139, 139),
-	A3($mdgriffith$elm_ui$Element$rgb255, 82, 132, 24));
+	A3($mdgriffith$elm_ui$Element$rgb255, 175, 98, 12));
 var $elm$time$Time$Posix = $elm$core$Basics$identity;
 var $elm$time$Time$millisToPosix = $elm$core$Basics$identity;
 var $Fresheyeball$elm_return$Return$return = F2(
@@ -5909,7 +5909,7 @@ var $author$project$Main$darkMode = A3(
 	$author$project$Main$palFun,
 	1,
 	A3($mdgriffith$elm_ui$Element$rgb255, 0, 139, 139),
-	A3($mdgriffith$elm_ui$Element$rgb255, 82, 132, 24));
+	A3($mdgriffith$elm_ui$Element$rgb255, 175, 98, 12));
 var $author$project$Main$NoOp = {$: 11};
 var $elm$browser$Browser$Dom$focus = _Browser_call('focus');
 var $author$project$Main$focusHere = A2(
@@ -16285,7 +16285,7 @@ var $author$project$Main$svgImage = F2(
 											$elm_community$typed_svg$TypedSvg$Attributes$fontSize(
 											$elm_community$typed_svg$TypedSvg$Types$px($author$project$Main$f)),
 											$elm_community$typed_svg$TypedSvg$Attributes$alignmentBaseline(1),
-											$elm_community$typed_svg$TypedSvg$Attributes$letterSpacing('1.5'),
+											$elm_community$typed_svg$TypedSvg$Attributes$letterSpacing('1.15'),
 											$elm_community$typed_svg$TypedSvg$Attributes$fill(
 											$elm_community$typed_svg$TypedSvg$Types$Paint(
 												$author$project$Main$elToColor(
@@ -17235,7 +17235,7 @@ var $author$project$Main$view = function (model) {
 						$mdgriffith$elm_ui$Element$Font$size(
 						$elm$core$Basics$round($author$project$Main$f)),
 						$mdgriffith$elm_ui$Element$Font$medium,
-						$mdgriffith$elm_ui$Element$Font$letterSpacing(0.5),
+						$mdgriffith$elm_ui$Element$Font$letterSpacing(1.15),
 						$mdgriffith$elm_ui$Element$Font$wordSpacing(1.5),
 						$mdgriffith$elm_ui$Element$spacing(
 						$elm$core$Basics$round($author$project$Main$f * $author$project$Main$s)),

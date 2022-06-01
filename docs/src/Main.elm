@@ -524,7 +524,7 @@ view model =
              , Font.color model.theme.fg
              , Font.size <| round f
              , Font.medium
-             , Font.letterSpacing 0.5 --1.25
+             , Font.letterSpacing 1.15
              , Font.wordSpacing 1.5
              , El.spacing <| round <| f * s
              , El.inFront <|
@@ -755,7 +755,8 @@ lightMode =
     palFun
         LightMode
         (El.rgb255 0x00 0x8B 0x8B)
-        (El.rgb255 0x52 0x84 0x18)
+        --(El.rgb255 0x52 0x84 0x18)
+        (El.rgb255 0xAF 0x62 0x0C)
 
 
 darkMode : ColorScheme
@@ -763,7 +764,8 @@ darkMode =
     palFun
         DarkMode
         (El.rgb255 0x00 0x8B 0x8B)
-        (El.rgb255 0x52 0x84 0x18)
+        --(El.rgb255 0x52 0x84 0x18)
+        (El.rgb255 0xAF 0x62 0x0C)
 
 
 
@@ -793,10 +795,10 @@ palFun : Theme -> El.Color -> El.Color -> ColorScheme
 palFun label color1 color2 =
     let
         dark =
-            mix 0.12 color1 black
+            mix 0.13 color1 black
 
         light =
-            mix 0.12 color1 white
+            mix 0.13 color1 white
 
         ( fg, bg ) =
             case label of
@@ -814,7 +816,7 @@ palFun label color1 color2 =
             else
                 color1
                     |> mix (i * 0.175) color2
-                    |> mix ((i - 1) * 0.05) fg
+                    |> mix ((i - 1) * 0.04) bg
     in
     { label = label
     , fg = fg
@@ -1182,7 +1184,7 @@ svgImage model i =
                             , Ta.fontFamily []
                             , Ta.fontSize <| Tt.px <| f
                             , Ta.alignmentBaseline Tt.AlignmentBaseline
-                            , Ta.letterSpacing "1.5"
+                            , Ta.letterSpacing "1.15"
                             , Ta.fill <|
                                 Tt.Paint <|
                                     elToColor <|
