@@ -1,5 +1,8 @@
 port module Main exposing (..)
 
+--import Svg.Styled as Svg
+--import Svg.Styled.Attributes as Svg
+
 import AlgGraph as Ag
 import Array exposing (Array)
 import Browser
@@ -9,6 +12,7 @@ import Browser.Navigation as Nav
 import Color exposing (Color)
 import Color.Blending as Blend
 import Color.Manipulate as Manip
+import Css
 import Curve
 import Dict
 import Element as El exposing (Attribute, Element, el)
@@ -25,6 +29,7 @@ import Html exposing (Html)
 import Html.Attributes exposing (id, style)
 import Html.Events.Extra.Mouse as Mouse
 import Html.Events.Extra.Touch as Touch
+import Html.Styled as HtmlS
 import Json.Decode as Decode
 import Json.Encode as Encode
 import Markup
@@ -61,14 +66,14 @@ type alias Model =
     { key : Nav.Key
     , url : Url.Url
     , time : Time.Posix
-    , delta : Float
     , mousePos : XY
     , theme : ColorScheme
-    , viewport : Maybe Viewport
+    , viewport : Maybe Dom.Element
     , menu : Visibility
     , graph : Graph NodeId Entity ()
     , drag : Maybe Drag
     , forceSim : Maybe (Force.State NodeId)
+    , textBox : String
     }
 
 
@@ -77,11 +82,13 @@ type Msg
     | LinkClicked Browser.UrlRequest
     | ToggleTheme
     | ToggleMenu
-    | Tick Float
+    | Tick Time.Posix
     | DragStart NodeId XY
     | DragAt XY
     | DragEnd XY
-    | GetViewport (Maybe Viewport)
+    | GetViewport (Maybe Dom.Element)
+    | UpdateText String
+    | FocusHere
     | NoOp
 
 
@@ -201,7 +208,6 @@ init ( time, initSaveState ) url key =
         { key = key
         , url = url
         , time = Time.millisToPosix time
-        , delta = 0
         , mousePos = { x = 0, y = 0 }
         , theme = lightMode
         , viewport = Nothing
@@ -209,15 +215,15 @@ init ( time, initSaveState ) url key =
         , graph = graph
         , drag = Nothing
         , forceSim = Nothing
+        , textBox = ""
         }
-        getViewportTask
+    <|
+        getViewportTask "svg-image-1"
 
 
-
-{- The forces that act on nodes and links. -}
-{- FIXME: Get real initial graph state, and don't render if empty -}
-
-
+{-| The forces that act on nodes and links.
+FIXME: Get real initial graph state, and don't render if empty
+-}
 graph : Graph NodeId Entity ()
 graph =
     stickManGraph
@@ -276,15 +282,11 @@ update msg model =
                                 Open
                 }
 
-        Tick delta ->
-            if model.delta < 50 then
-                Return.singleton
-                    (updateSim { model | delta = model.delta + delta })
-
-            else
-                return
-                    (updateSim { model | delta = 0 })
-                    getViewportTask
+        Tick time ->
+            return
+                (updateSim { model | time = time })
+            <|
+                getViewportTask "svg-image-1"
 
         DragStart index xy ->
             Return.singleton
@@ -309,7 +311,6 @@ update msg model =
                                         Just <|
                                             Force.reheat fSim
 
-                                    --fSim
                                     Nothing ->
                                         Nothing
                         }
@@ -351,8 +352,20 @@ update msg model =
                     Return.singleton
                         { model | viewport = mp }
 
+        UpdateText txt ->
+            Return.singleton
+                { model | textBox = txt }
+
+        FocusHere ->
+            return model focusHere
+
         NoOp ->
             Return.singleton model
+
+
+focusHere : Cmd Msg
+focusHere =
+    Task.attempt (\_ -> NoOp) (Dom.focus "textBox")
 
 
 updateSim : Model -> Model
@@ -407,8 +420,8 @@ updateSim model =
             model
 
 
-getViewportTask : Cmd Msg
-getViewportTask =
+getViewportTask : String -> Cmd Msg
+getViewportTask id =
     Task.attempt
         (\task ->
             case task of
@@ -419,7 +432,7 @@ getViewportTask =
                     GetViewport Nothing
         )
     <|
-        Dom.getViewport
+        Dom.getElement id
 
 
 maybeStartSimulation : Model -> Model
@@ -430,7 +443,7 @@ maybeStartSimulation model =
                 toLinkRec ( a, b ) =
                     { source = a
                     , target = b
-                    , distance = 150
+                    , distance = 75
                     , strength = Nothing
                     }
 
@@ -442,20 +455,9 @@ maybeStartSimulation model =
                         |> List.map Tuple.first
                         |> Force.manyBodyStrength -100
                     , Force.center
-                        (vp.scene.width / 2)
-                        (vp.scene.height / 2)
+                        (vp.element.width / 2)
+                        (vp.element.height / 2)
                     ]
-
-                {- [ Force.links <|
-                       Graph.edges graph
-                   , Force.manyBody <|
-                       List.map Tuple.first <|
-                           Graph.nodes <|
-                               graph
-                   , Force.center (vp.viewport.width / 2)
-                       (vp.viewport.height / 2)
-                   ]
-                -}
             in
             { model
                 | forceSim =
@@ -482,35 +484,25 @@ tupToXY ( x, y ) =
 
 subs : Model -> Sub Msg
 subs model =
-    {- case model.drag of
-       Nothing ->
-           case model.forceSim of
-               Nothing ->
-                   Sub.none
-
-               Just sim ->
-                   if Force.isCompleted sim then
-                       Sub.none
-
-                   else
-                       Events.onAnimationFrameDelta Tick
-
-       Just _ ->
+    {- Sub.batch
+       [ Events.onAnimationFrame Tick
+       ]
     -}
-    Sub.batch
-        [ Events.onAnimationFrameDelta Tick
-        , Events.onMouseMove
-            (Decode.map
-                (.offsetPos >> tupToXY >> DragAt)
-                Mouse.eventDecoder
-            )
-        , Events.onMouseUp
-            (Decode.map
-                (.offsetPos >> tupToXY >> DragEnd)
-                Mouse.eventDecoder
-            )
-        , Events.onAnimationFrameDelta Tick
-        ]
+    case model.drag of
+        Nothing ->
+            case model.forceSim of
+                Nothing ->
+                    Sub.none
+
+                Just sim ->
+                    if Force.isCompleted sim then
+                        Sub.none
+
+                    else
+                        Events.onAnimationFrame Tick
+
+        Just _ ->
+            Events.onAnimationFrame Tick
 
 
 
@@ -521,16 +513,21 @@ view : Model -> Browser.Document Msg
 view model =
     (\body -> { title = "DIMS", body = [ body ] }) <|
         El.layout
-            [ El.width El.fill
-            , getExtFont "Dosis"
-            , Bg.color model.theme.bg
-            , Font.color model.theme.fg
-            , Font.size <| round f
-            , Font.medium
-            , Font.letterSpacing 1.25
-            , Font.wordSpacing 1.5
-            , El.spacing <| round <| f * s
-            , El.inFront <|
+            ([ El.width El.fill
+
+             --, getExtFont "Courier Prime"
+             --, getExtFont "Spline Sans Mono"
+             --, getExtFont "Jetbrains Mono"
+             --, getExtFont "Dosis"
+             , getExtFont "Karma"
+             , Bg.color model.theme.bg
+             , Font.color model.theme.fg
+             , Font.size <| round f
+             , Font.medium
+             , Font.letterSpacing 0.5 --1.25
+             , Font.wordSpacing 1.5
+             , El.spacing <| round <| f * s
+             , El.inFront <|
                 case model.menu of
                     Open ->
                         El.row
@@ -543,9 +540,6 @@ view model =
                                     , right = round <| f
                                 }
                             , Bg.color model.theme.settingsBar
-
-                            --<| changeAlpha 0.05 model.theme.fg
-                            --, Font.color white
                             ]
                             [ El.row
                                 [ El.alignLeft
@@ -554,9 +548,6 @@ view model =
                                 [ el
                                     [ El.paddingEach
                                         { edges | right = round <| f * 0.5 }
-
-                                    --, Font.size <| round <| f * 1.8
-                                    --, Font.bold
                                     ]
                                   <|
                                     button model.theme.link
@@ -587,64 +578,69 @@ view model =
                                     "https://github.com/thistent/dims"
                                 )
                                 "DIMS"
-
-                            {- El.link
-                               [ Font.bold
-                               , Font.color model.theme.link
-                               ]
-                               { url = "https://github.com/thistent/dims"
-                               , label =
-                                   El.text "DIMS"
-
-                               --El.text "Distributed Idea Mapping System"
-                               }
-                            -}
                             ]
 
                     Closed ->
                         el
                             [ El.padding <| round <| f * 0.5
-
-                            --, Bg.color model.theme.settingsBar
                             ]
                         <|
                             button model.theme.link (Just ToggleMenu) "Menu"
-            ]
+             ]
+                ++ (case model.viewport of
+                        Nothing ->
+                            []
+
+                        Just vp ->
+                            [ El.htmlAttribute <|
+                                Mouse.onMove (.pagePos >> tupToXY >> adjustCoords vp >> DragAt)
+                            , El.htmlAttribute <|
+                                Mouse.onUp (.pagePos >> tupToXY >> adjustCoords vp >> DragEnd)
+                            ]
+                   )
+            )
         <|
             El.column
                 [ El.width El.fill
-                , El.inFront <|
-                    svgImage model
                 ]
                 [ El.textColumn
-                    [ El.width <| El.px <| round <| f * 40
+                    [ El.width <| El.px <| round <| f * 38
                     , El.height El.fill
                     , El.centerX
                     , El.paddingXY 0 (round <| f * s * 3.0)
-                    , El.spacing <| round <| f * 2.0
+                    , El.spacing <| round <| f * 1.5
                     ]
                     [ h1 model.theme
-                        "Heading Level One: With some very long title text so that I can see if wrapping works properly"
-
-                    --, spacer
+                        "A heading with some very long title text so that I can see if wrapping works properly"
                     , h2 model.theme
-                        "Heading Level Two"
-
-                    --, spacer
+                        --"Heading Level Two"
+                        "A heading with some very long title text so that I can see if wrapping works properly"
                     , h3 model.theme
-                        "Heading Level Three"
+                        --"Heading Level Three"
+                        "A heading with some very long title text so that I can see if wrapping works properly"
                     , Input.multiline
-                        [ Bg.color (mix 0.02 model.theme.link model.theme.bg)
-                        , Font.color model.theme.fg
-                        , Border.color <| changeAlpha 0.1 model.theme.link
+                        [ Font.color (mix 0.1 model.theme.bg model.theme.fg)
+                        , Border.widthEach
+                            { edges | top = 2, bottom = 2 }
+                        , Border.color <| changeAlpha 0.05 model.theme.link
+                        , Bg.color (mix 0.015 model.theme.link model.theme.bg)
+                        , El.spacing <| round <| f * 1.0
+                        , El.paddingEach
+                            { edges
+                                | top = round <| f * 0.5
+                                , bottom = round <| f * 0.25
+                                , left = round <| f * 0.25
+                                , right = round <| f * 0.25
+                            }
+                        , Event.onClick FocusHere
+                        , El.htmlAttribute <| Html.Attributes.id "textBox"
                         ]
-                        { onChange = \_ -> NoOp
-                        , text = ""
+                        { onChange = UpdateText
+                        , text = model.textBox
                         , placeholder =
                             Just <|
                                 Input.placeholder
-                                    [ Font.color <|
-                                        changeAlpha 0.4 model.theme.link
+                                    [ Font.color <| changeAlpha 0.25 model.theme.link
                                     ]
                                 <|
                                     El.text "Type some text!"
@@ -652,11 +648,19 @@ view model =
                         , spellcheck = False
                         }
                     , h4 model.theme
-                        "Heading Level Four"
+                        --"Heading Level Four"
+                        "A heading with some very long title text so that I can see if wrapping works properly"
+                    , svgImage model 1
+                    , button model.theme.link
+                        (Just ToggleMenu)
+                        "Menu"
                     , h5 model.theme
-                        "Heading Level Five"
+                        --"Heading Level Five"
+                        "A heading with some very long title text so that I can see if wrapping works properly"
+                    , svgImage model 2
                     , h6 model.theme
-                        "Heading Level Six"
+                        --"Heading Level Six"
+                        "A heading with some very long title text so that I can see if wrapping works properly"
                     , El.paragraph
                         [ El.spacing <| round <| f * 1.0
                         ]
@@ -681,8 +685,9 @@ view model =
                         ]
                     , El.textColumn
                         [ El.width El.fill
-                        , Border.widthEach { edges | top = 1, bottom = 1 }
-                        , Border.color model.theme.math.frac
+                        , Border.widthEach { edges | top = 2, bottom = 2 }
+                        , Border.color <| changeAlpha 0.05 model.theme.link
+                        , Bg.color (mix 0.02 model.theme.link model.theme.bg)
                         , El.padding <| round <| f * s
                         , El.spacing <| round <| f * s
                         ]
@@ -713,8 +718,6 @@ view model =
                                 ]
                               <|
                                 latex f
-
-                            --, el [ Font.bold ] <| El.text "LATEX"
                             , El.text ","
                             ]
                         , El.text <|
@@ -726,7 +729,7 @@ view model =
 
 spacer : Element Msg
 spacer =
-    el [ El.height <| El.px <| round <| f ] El.none
+    el [ El.height <| El.px <| round <| f * 1.5 ] El.none
 
 
 
@@ -747,103 +750,80 @@ mix w a b =
     colorMap2 (\x y -> Manip.weightedMix x y w) a b
 
 
-
-{-
-   lightMode : ColorScheme
-   lightMode =
-       palFun
-           LightMode
-           (mix 0.5 black pal.aqua4)
-           (mix 0.7 white pal.aqua4)
-           --black
-           pal.aqua4
-
-
-   darkMode : ColorScheme
-   darkMode =
-       palFun
-           DarkMode
-           (mix 0.6 white pal.aqua4)
-           (mix 0.85 black pal.aqua4)
-           pal.aqua5
--}
-
-
 lightMode : ColorScheme
 lightMode =
     palFun
         LightMode
-        (mix 0.8 black testColor)
-        (mix 0.7 white testColor)
-        (colorMap (Manip.saturate 0.25) (mix 0.1 black testColor))
-        (colorMap (Manip.saturate 0.25) (mix 0.1 black testBgColor))
-
-
-testColor =
-    --El.rgb255 0x31 0x64 0x4E
-    El.rgb255 0x1E 0x76 0x84
-
-
-testBgColor =
-    El.rgb255 0xCB 0x4B 0x60
+        (El.rgb255 0x00 0x8B 0x8B)
+        (El.rgb255 0x52 0x84 0x18)
 
 
 darkMode : ColorScheme
 darkMode =
     palFun
         DarkMode
-        (mix 0.7 white testColor)
-        (mix 0.8 black testColor)
-        (colorMap (Manip.saturate 0.25) (mix 0.4 white testColor))
-        (colorMap (Manip.saturate 0.25) (mix 0.4 white testBgColor))
+        (El.rgb255 0x00 0x8B 0x8B)
+        (El.rgb255 0x52 0x84 0x18)
 
 
-pink =
-    El.rgb 0.9 0.1 0.4
+
+{-
+   grey =
+       El.rgb 0.5 0.5 0.5
 
 
-berry =
-    El.rgb 0.6 0 0.2
+   lightGrey =
+       El.rgb 0.65 0.65 0.65
 
 
-getSecondary : El.Color -> El.Color
-getSecondary color =
-    color
-        |> colorMap (Manip.rotateHue 25 >> Manip.saturate 2.0)
+   darkGrey =
+       El.rgb 0.35 0.35 0.35
 
 
-palFun : Theme -> El.Color -> El.Color -> El.Color -> El.Color -> ColorScheme
-palFun label fg bg hi alt =
+   pink =
+       El.rgb 0.9 0.1 0.4
+
+
+   berry =
+       El.rgb 0.6 0 0.2
+-}
+
+
+palFun : Theme -> El.Color -> El.Color -> ColorScheme
+palFun label color1 color2 =
     let
-        dark n =
-            colorMap (Manip.darken n)
+        dark =
+            mix 0.12 color1 black
+
+        light =
+            mix 0.12 color1 white
+
+        ( fg, bg ) =
+            case label of
+                LightMode ->
+                    ( dark, light )
+
+                DarkMode ->
+                    ( light, dark )
 
         hC : Float -> El.Color
         hC i =
             if i == 1 then
-                hi
+                color1
 
             else
-                hi
-                    |> mix (i * 0.175) alt
-                    |> mix ((i - 1) * 0.125) bg
-
-        --|> colorMap (Manip.saturate (i * 0.9))
+                color1
+                    |> mix (i * 0.175) color2
+                    |> mix ((i - 1) * 0.05) fg
     in
     { label = label
     , fg = fg
-
-    -- mix 0.5 pal.aqua5 black
     , bg = bg
-
-    -- mix 0.5 pal.teal5 white
     , settingsBar =
         changeAlpha 0.5 <|
-            mix 0.2 hi bg
-    , link = hi
-    , alt = alt
-
-    -- mix 0.5 pal.aqua2 (El.rgb 0 0.75 1)
+            mix 0.2 color1 bg
+    , link = color1
+    , alt = color2
     , h1 = hC 1
     , h2 = hC 2
     , h3 = hC 3
@@ -856,14 +836,14 @@ palFun label fg bg hi alt =
         , tyVar = hC 3
         , kVar = hC 4
         , op = hC 1
-        , exp = hi
-        , frac = mix 0.5 hi bg
-        , ofType = hi
-        , ofKind = hi
-        , pars = mix 0.6 hi bg
-        , lam = hi
-        , reductionRule = mix 0.5 hi fg
-        , replace = hi
+        , exp = color1
+        , frac = mix 0.5 color1 bg
+        , ofType = color1
+        , ofKind = color1
+        , pars = mix 0.6 color1 bg
+        , lam = color1
+        , reductionRule = mix 0.5 color1 fg
+        , replace = color1
         }
     }
 
@@ -900,58 +880,86 @@ header :
     -> String
     -> Element Msg
 header level size color str =
-    El.row
-        [ El.width El.fill
-        , Border.widthEach { edges | bottom = 1 }
-        , Border.color <| changeAlpha 0.4 color
-        ]
-        [ El.paragraph
-            [ El.width El.fill
-            , Font.size <| round <| f * size
-            , Font.semiBold
-            , Font.color color
+    El.column []
+        [ spacer
+        , El.row
+            [ {- Bg.color <| changeAlpha 0.15 color
+                 , Border.shadow
+                     { offset = ( 4, 4 )
+                     , size = -0.5
+                     , blur = 5
+                     , color = changeAlpha 0.25 black
+                     }
+                     ,
+              -}
+              El.width El.fill
+            , Border.widthEach
+                { edges
+                    | bottom = 2
+                }
+            , Border.color <| changeAlpha 0.5 color
+            ]
+            [ El.paragraph
+                [ El.width El.fill
+                , El.spacing <| round <| f * size * 0.15 * toFloat level
+                , Font.size <| round <| f * size
+                , Font.semiBold
+                , Font.color color
+                , Font.wordSpacing <| f * 0.5
+                , Region.heading level
+                , El.paddingEach
+                    { edges
+                        | {- top = round <| f * size * 0.5
+                             ,
+                          -}
+                          bottom = round <| f * size * 0.25
 
-            --, Font.justify
-            , Region.heading level
+                        --, left = round <| f * size * 0.5
+                    }
+                ]
+                [ El.text str ]
+            , el
+                [ El.alignBottom
+                , El.alignRight
+                , Font.bold
+                , Font.color <| changeAlpha 0.5 color
+                , El.paddingEach
+                    { edges
+                        | left = round f
+                        , right = round <| f * 0.5
+                    }
+                ]
+              <|
+                El.text <|
+                    "h"
+                        ++ String.fromInt level
             ]
-            [ El.text str ]
-        , el
-            [ El.alignBottom
-            , El.alignRight
-            , Font.bold
-            , Font.color <| changeAlpha 0.5 color
-            , El.paddingEach { edges | left = round f }
-            ]
-          <|
-            El.text <|
-                "level-"
-                    ++ String.fromInt level
         ]
 
 
 h1 : ColorScheme -> String -> Element Msg
 h1 theme =
-    header 1 3.0 theme.h1
+    header 1 2.5 theme.h1
 
 
 h2 : ColorScheme -> String -> Element Msg
 h2 theme =
-    header 2 2.6 theme.h2
+    header 2 2.2 theme.h2
 
 
 h3 : ColorScheme -> String -> Element Msg
 h3 theme =
-    header 3 2.2 theme.h3
+    header 3 1.9 theme.h3
 
 
 h4 : ColorScheme -> String -> Element Msg
 h4 theme =
-    header 4 1.8 theme.h4
+    header 4 1.6 theme.h4
 
 
 h5 : ColorScheme -> String -> Element Msg
 h5 theme =
-    header 5 1.4 theme.h5
+    header 5 1.3 theme.h5
 
 
 h6 : ColorScheme -> String -> Element Msg
@@ -975,7 +983,13 @@ button color msg label =
             , Border.dashed
             , Border.color <| changeAlpha 0.5 color
             , Border.rounded 5
-            , El.paddingXY (round <| f * 0.35) (round <| f * 0.25)
+            , El.paddingEach
+                { edges
+                    | top = round <| f * 0.25
+                    , bottom = round <| f * 0.05
+                    , left = round <| f * 0.35
+                    , right = round <| f * 0.35
+                }
             ]
             { onPress = msg
             , label =
@@ -1018,8 +1032,8 @@ latex size =
                 [ getExtFont "Merriweather"
                 , El.width El.shrink
                 , El.height El.shrink
-                , El.moveUp <| size * 0.8
-                , El.moveRight <| size * 0.2
+                , El.moveUp <| size * 0.9
+                , El.moveRight <| size * 0.4
                 , Font.letterSpacing 0
                 ]
                 [ el [] <| El.text " L"
@@ -1044,7 +1058,7 @@ latex size =
                   <|
                     El.text " X"
                 ]
-        , El.width <| El.px <| round <| size * 2.8
+        , El.width <| El.px <| round <| size * 3.0
         ]
         El.none
 
@@ -1137,64 +1151,62 @@ Ultimately, the goal is to build a zettlekasten-like mind-mapping system with a 
 -- Not Yet Needed --
 
 
-svgImage : Model -> Element Msg
-svgImage model =
+svgImage : Model -> Int -> Element Msg
+svgImage model i =
     el
-        [ El.width <| El.fill
-        , El.height <| El.fill
-        , Font.color model.theme.fg
-        , Border.width 1
-        , Border.color <| changeAlpha 0.1 model.theme.link
-        , El.htmlAttribute <| id "svgNode"
-        , El.alpha 0.25
+        [ El.width El.fill
+        , El.height <| El.px <| round <| f * 24
+        , El.htmlAttribute <| id <| "svg-image-" ++ String.fromInt i
+
+        --, Border.widthEach
+        --    { edges | top = 1, bottom = 1 }
+        --, Border.color (mix 0.2 model.theme.fg model.theme.bg)
+        --, Bg.color (mix 0.02 model.theme.link model.theme.bg)
+        , Border.widthEach
+            { edges | top = 2, bottom = 2 }
+        , Border.color <| changeAlpha 0.05 model.theme.link
+        , Bg.color (mix 0.015 model.theme.link model.theme.bg)
         ]
     <|
-        case model.viewport of
-            Nothing ->
-                el
-                    [ El.alignLeft
-                    , El.alignBottom
-                    , Font.color <|
-                        changeAlpha 0.4 model.theme.link
-                    ]
-                <|
-                    el [ El.padding <| round <| f / 3 ] <|
-                        El.text "Loading Graph..."
+        El.html <|
+            case model.viewport of
+                Nothing ->
+                    Ts.svg
+                        [ Ta.width <| Tt.percent 100
+                        , Ta.height <| Tt.percent 100
+                        ]
+                    <|
+                        [ Ts.text_
+                            [ Ta.x (Tt.px <| f * 0.25)
+                            , Ta.y (Tt.px <| f * 24 - f * 0.75)
+                            , Ta.fontFamily []
+                            , Ta.fontSize <| Tt.px <| f
+                            , Ta.alignmentBaseline Tt.AlignmentBaseline
+                            , Ta.letterSpacing "1.5"
+                            , Ta.fill <|
+                                Tt.Paint <|
+                                    elToColor <|
+                                        changeAlpha 0.2 model.theme.link
+                            ]
+                            [ Tc.text "Graph View" ]
+                        ]
 
-            Just vp ->
-                El.html <|
+                Just vp ->
                     Ts.svg
                         [ Ta.viewBox
                             0
                             0
-                            vp.scene.width
-                            vp.scene.height
-
-                        --,  Ta.width <| Tt.px vp.viewport.width
-                        --, Ta.height <| Tt.px vp.viewport.height
-                        --, Ta.preserveAspectRatio
-                        --    (Tt.Align Tt.ScaleMid Tt.ScaleMid)
-                        --    Tt.Meet
+                            vp.element.width
+                            vp.element.height
                         ]
-                        [ {- Ts.rect
-                             [ Ts.x <| Ts.px 0
-                             , Ts.y <| Ts.px 0
-                             , Ts.width <| Ts.percent 100
-                             , Ts.height <| Ts.percent 100
-                             , Ts.fill <|
-                                 Ts.Paint <|
-                                     Color.rgba 1 0 0 0.2
-                             ]
-                             []
-                             ,
-                          -}
-                          Graph.edges model.graph
+                    <|
+                        [ Graph.edges model.graph
                             |> List.map (linkElement model.theme model.graph)
                             |> Ts.g [ Ta.class [ "links" ] ]
                         , Graph.nodes model.graph
                             |> List.map
                                 (nodeElement model.theme
-                                    vp.viewport
+                                    vp
                                 )
                             |> Ts.g [ Ta.class [ "nodes" ] ]
                         ]
@@ -1240,7 +1252,7 @@ linkElement theme gr ( sourceId, targetId ) =
     in
     Ts.line
         [ Ta.strokeWidth <| Tt.px 2
-        , Ta.stroke <| Tt.Paint <| elToColor theme.link
+        , Ta.stroke <| Tt.Paint <| elToColor <| mix 0.5 theme.link theme.bg
         , Ta.x1 <| Tt.px source.x
         , Ta.y1 <| Tt.px source.y
         , Ta.x2 <| Tt.px target.x
@@ -1249,123 +1261,7 @@ linkElement theme gr ( sourceId, targetId ) =
         []
 
 
-
---nodeElement : { a | id : NodeId, label : { b | x : Float, y : Float, value : String } } -> Svg Msg
---nodeElement node =
-{-
-   nodeElement : Dom.Element -> ( NodeId, Maybe Entity ) -> Svg Msg
-   nodeElement svgPos ( nodeId, maybeEntity ) =
-       Ts.circle
-           [ Ts.r 2.5
-           , Ts.fill <| Ts.Paint Color.black
-           , Ts.stroke <| Ts.Paint <| Color.rgba 0 0 0 0
-           , Ts.strokeWidth 7
-           , onMouseDown nodeId
-           , Ts.cx node.label.x
-           , Ts.cy node.label.y
-           ]
-           [ title [] [ Ts.text node.label.value ] ]
-
-      linkElement : Graph NodeId Entity () -> ( NodeId, NodeId ) -> Svg Msg
-      linkElement gr ( sourceId, targetId ) =
-          let
-              source : Entity
-              source =
-                  let
-                      maybeData =
-                          Graph.getData sourceId gr
-                  in
-                  case maybeData of
-                      Just data ->
-                          data
-
-                      Nothing ->
-                          emptyEntity sourceId <| NodeVal "" [] []
-
-              target : Entity
-              target =
-                  let
-                      maybeData =
-                          Graph.getData targetId gr
-                  in
-                  case maybeData of
-                      Just data ->
-                          data
-
-                      Nothing ->
-                          emptyEntity targetId <| NodeVal "" [] []
-
-              arrowPath : SubPath
-              arrowPath =
-                  SubPath.close <|
-                      Curve.linear
-                          [ ( 0, 0 )
-                          , ( -10, 5 )
-                          , ( -5, 0 )
-                          , ( -10, -5 )
-                          ]
-
-              relAng : Float
-              relAng =
-                  atan2 (target.y - source.y) (target.x - source.x)
-
-              genPath : NodeId -> Shape.Arc -> Svg Msg
-              genPath index arc =
-                  let
-                      ( xCent, yCent ) =
-                          Shape.centroid
-                              { arc
-                                  | innerRadius = 10
-                                  , outerRadius = 20
-                              }
-
-                      absMid : ( Float, Float )
-                      absMid =
-                          ( (source.x + target.x) / 2 + 1.75 * xCent
-                          , (source.y + target.y) / 2 + 1.75 * yCent
-                          )
-
-                      pathAttribs : List (Ts.Attribute Msg)
-                      pathAttribs =
-                          [ List.drop index smallPieNums
-                              |> List.head
-                              |> Maybe.withDefault 0
-                              |> (\x -> 10 * x / List.foldl (+) 0 smallPieNums)
-                              |> Ts.Px
-                              |> Ts.strokeWidth
-                          , Color.rgba 0 0 0 0
-                              |> Ts.Paint
-                              |> Ts.fill
-                          , Color.black
-                              |> Ts.Paint
-                              |> Ts.stroke
-                          ]
-                  in
-                  Ts.g []
-                      [ SubPath.element
-                          (Shape.catmullRomCurveOpen 1
-                              [ ( source.x, source.y )
-                              , ( source.x + xCent, source.y + yCent )
-                              , absMid
-                              , ( target.x + xCent, target.y + yCent )
-                              , ( target.x, target.y )
-                              ]
-                          )
-                          pathAttribs
-                      , SubPath.element
-                          (SubPath.rotate relAng <|
-                              SubPath.translate absMid <|
-                                  arrowPath
-                          )
-                          pathAttribs
-                      ]
-          in
-          Ts.g [] <|
-              List.indexedMap genPath [ 2, 3, 5 ]
--}
-
-
-nodeElement : ColorScheme -> ElementContext -> ( NodeId, Maybe Entity ) -> Svg Msg
+nodeElement : ColorScheme -> Dom.Element -> ( NodeId, Maybe Entity ) -> Svg Msg
 nodeElement theme svgPos ( nodeId, maybeEntity ) =
     let
         node : Entity
@@ -1378,44 +1274,52 @@ nodeElement theme svgPos ( nodeId, maybeEntity ) =
                     emptyEntity nodeId ""
     in
     Ts.g
-        [ onMouseDown node.id
-        , Touch.onStart (touchCoordinates svgPos >> DragStart node.id)
+        [ {- onMouseDown svgPos node.id
+             ,
+          -}
+          Touch.onStart (touchCoordinates svgPos >> DragStart node.id)
         , Touch.onMove (touchCoordinates svgPos >> DragAt)
         , Touch.onEnd (touchCoordinates svgPos >> DragEnd)
+        , Mouse.onDown (.offsetPos >> tupToXY >> DragStart node.id)
         ]
         [ Ts.circle
             [ Ta.cx <| Tt.Px node.x
             , Ta.cy <| Tt.Px node.y
-            , Ta.r <| Tt.Px 30
-            , Ta.fill <| Tt.Paint <| elToColor <| mix 0.5 theme.link theme.bg
-            , Ta.stroke <| Tt.Paint <| elToColor theme.link
+            , Ta.r <| Tt.Px <| f * 1.2
+            , Ta.fill <| Tt.Paint <| elToColor <| mix 0.25 theme.link theme.bg
+            , Ta.stroke <| Tt.Paint <| elToColor <| mix 0.5 theme.link theme.bg
             , Ta.strokeWidth <| Tt.px 2
             ]
             []
         , Ts.title
-            [ Ta.fill <| Tt.Paint <| elToColor <| theme.fg
-            ]
+            [ Ta.fill <| Tt.Paint <| elToColor <| theme.fg ]
             [ Tc.text <| String.fromInt node.id ]
         ]
 
 
-touchCoordinates : ElementContext -> Touch.Event -> XY
+adjustCoords : Dom.Element -> XY -> XY
+adjustCoords vp pos =
+    { pos
+        | x = pos.x - vp.element.x
+        , y = pos.y - vp.element.y
+    }
+
+
+touchCoordinates : Dom.Element -> Touch.Event -> XY
 touchCoordinates svgPos touchEvent =
     List.head touchEvent.changedTouches
         |> Maybe.map
-            -- FIXME: Which should be used here?
-            --.clientPos
             .pagePos
         --.screenPos
+        --.clientPos
         |> Maybe.withDefault ( 0, 0 )
-        |> (\( x, y ) ->
-                { x = x - svgPos.x, y = y - svgPos.y }
-           )
+        |> tupToXY
+        |> adjustCoords svgPos
 
 
-onMouseDown : NodeId -> Html.Attribute Msg
-onMouseDown nodeId =
-    Mouse.onDown (.offsetPos >> tupToXY >> DragStart nodeId)
+onMouseDown : Dom.Element -> NodeId -> Html.Attribute Msg
+onMouseDown svgPos nodeId =
+    Mouse.onDown (.pagePos >> tupToXY >> DragStart nodeId)
 
 
 stickManGraph : Graph NodeId String ()

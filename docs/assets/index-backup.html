@@ -27,7 +27,7 @@ if (navigator.storage && navigator.storage.persist)
   });
 
   app.ports.saveState.subscribe(function(data) {
-    localStorage.setItem('saveState', JSON.stringify(data));
+          localStorage.setItem('saveState', JSON.stringify(data));
   });
 
   app.ports.clearCache.subscribe(function() {
