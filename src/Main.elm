@@ -283,7 +283,7 @@ paneContents color size =
         ]
     <|
         el [ El.centerX, El.centerY ] <|
-            El.text "Hello Pane"
+            El.text "( Empty )"
 
 
 loadingPage : Timer -> Html Msg
@@ -321,16 +321,21 @@ loadingPage t =
 dimsMd : String
 dimsMd =
     """
-## **Dims** : The Distributed Idea Management System
+## **Dims** : A decentralized platform for ideation and DAO experimentation with a built-in pegging mechanism for a Djed-like stable coin
 
-This page serves two purposes. It will act as a landing page for all my projects in Cardano Catalyst Fund10, as well as being the first stage (a web-based interface) for my **Dims** project
+(This is where progress on this project will live)
 
----
+### Problem
+Current funding mechanisms have the following problems:
+ - Incentives don't encourage collaboration
+ - Voting systems are concurrency bottlenecks
+ - They don't encourage composable DAO experimentation
 
-### My Fund10 Proposals
-
-[View Source on GitHub](https://github.com/thistent/f10/)
-
+### Solution
+An open-source graph-based ideation management tool featuring:
+ - Asynchronous composable workflows
+ - Flexible funding and wage stability strategies
+ - Autonomy and donation-based incentives to work where needed
 """
 
 
@@ -401,7 +406,17 @@ markdownRenderer =
                         ]
                 }
     , image = \img -> El.none
-    , unorderedList = \items -> El.none
+    , unorderedList =
+        \items ->
+            El.column [ El.width El.fill, El.spacing 15 ]
+                (items
+                    |> List.map
+                        (\it ->
+                            case it of
+                                Md.ListItem _ xs ->
+                                    El.paragraph [ El.width El.fill ] <| (el [ Font.family [ Font.monospace ] ] <| El.text " -> ") :: xs
+                        )
+                )
     , orderedList = \startIndex items -> El.none
     , codeBlock =
         \{ body, language } -> El.none
@@ -437,15 +452,13 @@ innerView model _ =
             ]
             [ renderMd dimsMd
             , hbar
-            , propCard malawi
-            , propCard dao
-            , propCard dreps
-            , Delay.payload model.project
-                |> Maybe.map propCard
-                |> Maybe.withDefault El.none
+
+            --, Delay.payload model.project
+            --    |> Maybe.map propCard
+            --    |> Maybe.withDefault El.none
             , El.link
                 []
-                { url = "https://github.com/thistent/f10/"
+                { url = "https://github.com/thistent/dims/"
                 , label =
                     el
                         [ Font.color pal.blue
