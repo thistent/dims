@@ -1,8 +1,9 @@
 const std = @import("std");
 
+extern fn add(a: i32, b: i32) i32;
+
 pub fn main() !void {
     const title = "DIMS: A Platform for Decentralized Research and Collaboration";
-    const msg = "- Code will go here if funded!";
 
     const stdout_file = std.io.getStdOut().writer();
     var bw = std.io.bufferedWriter(stdout_file);
@@ -18,7 +19,11 @@ pub fn main() !void {
         try stdout.print("=", .{});
     }
 
-    try stdout.print("\n{s}\n", .{msg});
+    try stdout.print("\x1B[2m", .{});
+
+    const msg = "Code will go here if funded!";
+    const note = "The linked library says that 2 + 2 =";
+    try stdout.print("\n- {s}\n- {s} {}\n", .{ msg, note, add(2, 2) });
 
     // Thread pool.
     const cpus = try std.Thread.getCpuCount();
@@ -33,7 +38,7 @@ pub fn main() !void {
 
     try stdout.print("\n", .{});
 
-    try stdout.print("Starting Work...\n", .{});
+    try stdout.print("Starting Work...\x1b[0m\n", .{});
 
     for (0..cpus) |i| {
         try pool.spawn(work, .{i});
@@ -44,7 +49,7 @@ pub fn main() !void {
 
 fn work(id: usize) void {
     std.time.sleep(1 * std.time.ns_per_s);
-    std.debug.print("{} finished\n", .{id});
+    std.debug.print("Task complete: \x1B[32mThread #{}\x1B[0m\n", .{id});
 }
 
 test "simple test" {
