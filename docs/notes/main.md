@@ -1,4 +1,5 @@
-# Distributed Innovation Mapping System
+
+# Dims: A Platform for Decentralized Research & Collaboration
 
 ## Introduction
 
