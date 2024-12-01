@@ -1,0 +1,4 @@
+#! /bin/sh
+clear
+ls -R src/* | entr -r elm-live src/Main.elm 
+reset
